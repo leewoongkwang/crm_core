@@ -1,6 +1,22 @@
+# Python
 __pycache__/
 *.pyc
-db.sqlite3
-.env
-venv/
+*.pyo
+*.pyd
 *.log
+
+# Django / DB
+db.sqlite3
+*.sqlite3
+
+# Env & Secrets
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# Virtualenv
+venv/
+ENV/
