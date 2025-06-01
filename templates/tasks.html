@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}해야할 일{% endblock %}
+{% block page_title %}오늘의 실적 입력 & KPI 비교{% endblock %}
+
+{% block content %}
+<!-- ✅ 상단 배너 -->
+<div class="mb-6">
+  <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4" role="alert">
+    <p class="font-bold">이번 달 영업전략이 아직 입력되지 않았습니다.</p>
+    <p><a href="/strategy/" class="underline">전략 입력하러 가기 →</a></p>
+  </div>
+</div>
+
+<!-- ✅ KPI 비교 카드 리스트 -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+  <div class="bg-white p-4 rounded shadow border-l-4 border-red-500">
+    <h3 class="text-sm text-gray-500">1분콜</h3>
+    <p class="text-lg font-semibold text-red-600">7 / 10</p>
+    <p class="text-sm text-red-500">미달</p>
+  </div>
+  <div class="bg-white p-4 rounded shadow border-l-4 border-green-500">
+    <h3 class="text-sm text-gray-500">2분콜</h3>
+    <p class="text-lg font-semibold text-green-600">5 / 5</p>
+    <p class="text-sm text-green-500">달성</p>
+  </div>
+  <div class="bg-white p-4 rounded shadow border-l-4 border-red-500">
+    <h3 class="text-sm text-gray-500">카드가망 등록</h3>
+    <p class="text-lg font-semibold text-red-600">1 / 2</p>
+    <p class="text-sm text-red-500">미달</p>
+  </div>
+  <div class="bg-white p-4 rounded shadow border-l-4 border-green-500">
+    <h3 class="text-sm text-gray-500">밴드 인증</h3>
+    <p class="text-lg font-semibold text-green-600">3 / 3</p>
+    <p class="text-sm text-green-500">달성</p>
+  </div>
+</section>
+
+<!-- ✅ 실적 입력 폼 -->
+<section class="mb-10">
+  <h2 class="text-lg font-semibold mb-2">오늘 실적 입력</h2>
+  <form action="#" method="post" class="space-y-4 bg-white p-6 rounded shadow">
+    <div class="grid grid-cols-2 gap-4">
+      <label>1분콜<input type="number" name="call_1min" class="w-full border p-2 rounded" value="0"></label>
+      <label>2분콜<input type="number" name="call_2min" class="w-full border p-2 rounded" value="0"></label>
+      <label>카드가망 등록<input type="number" name="grade_potential" class="w-full border p-2 rounded" value="0"></label>
+      <label>밴드 인증<input type="number" name="band_verified" class="w-full border p-2 rounded" value="0"></label>
+      <label>제안 수<input type="number" name="daily_proposals" class="w-full border p-2 rounded" value="0"></label>
+      <label>방문 제안 수<input type="number" name="daily_visit_proposals" class="w-full border p-2 rounded" value="0"></label>
+    </div>
+    <div>
+      <label class="block mb-1">메모</label>
+      <textarea name="memo" rows="3" class="w-full border p-2 rounded"></textarea>
+    </div>
+    <div>
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">저장</button>
+    </div>
+  </form>
+</section>
+
+<!-- ✅ 오늘 입력 이력 요약 -->
+<section>
+  <h2 class="text-lg font-semibold mb-2">오늘 실적 요약</h2>
+  <div class="bg-white p-4 rounded shadow">
+    <p class="text-sm text-gray-600">입력 시각: 2025-05-31 16:12</p>
+    <p class="mt-2">1분콜 7 / 2분콜 5 / 가망 1 / 밴드 3</p>
+    <button class="mt-2 text-sm underline text-blue-600">수정</button>
+  </div>
+</section>
+{% endblock %}

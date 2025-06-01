@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}고객 삭제 확인{% endblock %}
+{% block page_title %}고객 삭제{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded shadow text-center">
+  <h2 class="text-lg font-bold mb-4">정말로 "{{ customer.name }}" 고객을 삭제하시겠습니까?</h2>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">삭제하기</button>
+    <a href="/customer/list/" class="ml-4 text-sm text-gray-500">취소</a>
+  </form>
+</div>
+{% endblock %}

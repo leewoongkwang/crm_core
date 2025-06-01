@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}고객 상세정보{% endblock %}
+{% block page_title %}고객 상세정보{% endblock %}
+
+{% block content %}
+<!-- ✅ 고객 프로필 카드 -->
+<section class="bg-white p-6 rounded shadow mb-6">
+  <h2 class="text-lg font-bold mb-4">👤 고객 프로필</h2>
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <div><strong>이름:</strong> 홍길동</div>
+    <div><strong>성별:</strong> M</div>
+    <div><strong>보험나이:</strong> 34세</div>
+    <div><strong>고객등급:</strong> 가망</div>
+    <div><strong>고객속성:</strong> 인콜</div>
+    <div><strong>우선순위:</strong> 상</div>
+    <div><strong>성향:</strong> 니즈확실</div>
+    <div><strong>라포형성도:</strong> 친함</div>
+    <div><strong>등록일:</strong> 2025-05-01</div>
+  </div>
+</section>
+
+<!-- ✅ 전송 상태 요약 카드 -->
+<section class="bg-white p-6 rounded shadow mb-6">
+  <h2 class="text-lg font-bold mb-4">📤 전송 상태</h2>
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+    <div>명함 전송: ✅</div>
+    <div>리포트 전송: ✅</div>
+    <div>1차콜 문자: ✅</div>
+    <div>1차콜 완료: ❌</div>
+    <div>거절 후 제안서: ✅</div>
+    <div>2차콜 완료: ❌</div>
+    <div>방문 제안: ❌</div>
+  </div>
+</section>
+
+<!-- ✅ 고객 메모 -->
+<section class="bg-white p-6 rounded shadow mb-6">
+  <h2 class="text-lg font-bold mb-2">📝 메모</h2>
+  <textarea class="w-full border p-2 rounded" rows="4" placeholder="자유롭게 메모를 남겨주세요..."></textarea>
+  <button class="mt-2 px-4 py-2 bg-blue-600 text-white rounded">저장</button>
+</section>
+
+<!-- ✅ 하단 탭 구조 -->
+<section>
+  <div class="mb-2 border-b flex space-x-4 text-sm font-semibold">
+    <button class="py-2 px-4 border-b-2 border-blue-600">14터치 이력</button>
+    <button class="py-2 px-4 hover:text-blue-600">리포트 내역</button>
+    <button class="py-2 px-4 hover:text-blue-600">계약정보</button>
+    <button class="py-2 px-4 hover:text-blue-600">활동기록</button>
+  </div>
+  <div class="bg-white p-6 rounded shadow">
+    <p class="text-gray-500">선택된 탭의 이력 데이터가 여기에 비동기로 로딩됩니다.</p>
+  </div>
+</section>
+{% endblock %}

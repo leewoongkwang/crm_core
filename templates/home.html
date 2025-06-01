@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}홈 - 대시보드{% endblock %}
+{% block page_title %}홈 - 대시보드{% endblock %}
+
+{% block content %}
+<!-- ✅ 중앙 메인 테이블 – 진행중인 터치 고객 -->
+<section class="mb-10">
+  <h2 class="text-lg font-semibold mb-2">진행중인 터치 고객</h2>
+  <table class="w-full bg-white rounded shadow">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="py-2 px-4 text-left">이름</th>
+        <th class="py-2 px-4 text-left">나이</th>
+        <th class="py-2 px-4 text-left">성별</th>
+        <th class="py-2 px-4 text-left">터치상태</th>
+        <th class="py-2 px-4 text-left">속성</th>
+        <th class="py-2 px-4 text-left">마지막 터치</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- 반복 -->
+      <tr class="border-t">
+        <td class="py-2 px-4">홍길동</td>
+        <td class="py-2 px-4">34</td>
+        <td class="py-2 px-4">M</td>
+        <td class="py-2 px-4">진행중</td>
+        <td class="py-2 px-4">인콜</td>
+        <td class="py-2 px-4">2025-05-27</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ✅ 우측 KPI 카드 4종 -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+  <div class="bg-white p-4 rounded shadow">
+    <h3 class="text-sm text-gray-500">주간 가망 확보 수</h3>
+    <p class="text-xl font-bold text-green-600">12</p>
+  </div>
+  <div class="bg-white p-4 rounded shadow">
+    <h3 class="text-sm text-gray-500">밴드 인증 수</h3>
+    <p class="text-xl font-bold text-red-500">5</p>
+  </div>
+  <div class="bg-white p-4 rounded shadow">
+    <h3 class="text-sm text-gray-500">주간 1분콜</h3>
+    <p class="text-xl font-bold text-green-600">30</p>
+  </div>
+  <div class="bg-white p-4 rounded shadow">
+    <h3 class="text-sm text-gray-500">주간 2분콜</h3>
+    <p class="text-xl font-bold text-red-500">8</p>
+  </div>
+</section>
+
+<!-- ✅ 하단 - 좌측: 이번 달 계약고객 / 우측: 주간/월간 차트 선택 -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <!-- 좌측 테이블 -->
+  <div>
+    <h2 class="text-lg font-semibold mb-2">이번 달 계약 고객</h2>
+    <table class="w-full bg-white rounded shadow">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="py-2 px-4 text-left">이름</th>
+          <th class="py-2 px-4 text-left">보험상품</th>
+          <th class="py-2 px-4 text-left">청약날짜</th>
+          <th class="py-2 px-4 text-left">증권전송</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-t">
+          <td class="py-2 px-4">김보장</td>
+          <td class="py-2 px-4">OO생명 실손보험</td>
+          <td class="py-2 px-4">2025-05-05</td>
+          <td class="py-2 px-4">O</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 우측 차트영역 (임시) -->
+  <div>
+    <h2 class="text-lg font-semibold mb-2">주간 활동 이력</h2>
+    <div class="bg-white rounded shadow p-4 h-64 flex items-center justify-center text-gray-400">
+      📊 차트 Placeholder (Chart.js/Plotly)
+    </div>
+  </div>
+</section>
+{% endblock %}

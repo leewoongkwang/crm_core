@@ -1,0 +1,43 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}CRM{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex h-screen">
+  <!-- 사이드바 -->
+  <aside class="w-64 bg-white shadow-lg p-4">
+    <div class="text-xl font-bold mb-6">📌 CRM</div>
+    <nav class="space-y-2">
+      <a href="/home" class="block py-2 px-3 hover:bg-gray-200 rounded">1. 홈</a>
+      <a href="/strategy" class="block py-2 px-3 hover:bg-gray-200 rounded">2. 영업방향</a>
+      <a href="/customer/list" class="block py-2 px-3 hover:bg-gray-200 rounded">3. 고객목록</a>
+      <a href="#" class="block py-2 px-3 hover:bg-gray-200 rounded">4. 고객정보</a>
+      <a href="#" class="block py-2 px-3 hover:bg-gray-200 rounded">5. 보장분석</a>
+      <a href="/tasks" class="block py-2 px-3 hover:bg-gray-200 rounded">6. 해야할일</a>
+      <a href="/touch" class="block py-2 px-3 hover:bg-gray-200 rounded">7. 14터치</a>
+      <a href="#" class="block py-2 px-3 hover:bg-gray-200 rounded">8. 설정</a>
+    </nav>
+  </aside>
+
+  <!-- 메인 -->
+  <main class="flex-1 overflow-auto p-6">
+    <!-- 상단 헤더 -->
+    <header class="flex justify-between items-center mb-6">
+      <div class="text-lg font-bold">📅 {% block page_title %}{% endblock %}</div>
+      <div class="flex items-center space-x-4">
+        <span>🔔</span>
+        <div class="w-8 h-8 rounded-full bg-gray-400"></div>
+      </div>
+    </header>
+
+    <!-- 실제 페이지 컨텐츠 -->
+    <div>
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+</body>
+</html>

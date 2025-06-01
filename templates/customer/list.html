@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}고객 목록{% endblock %}
+{% block page_title %}고객 목록{% endblock %}
+
+{% block content %}
+<!-- ✅ 상단: 고객 추가 버튼 -->
+<div class="flex justify-between items-center mb-4">
+  <h2 class="text-xl font-bold">📋 고객 목록</h2>
+  <a href="/customer/add/" class="bg-blue-600 text-white px-4 py-2 rounded text-sm">+ 신규 고객 등록</a>
+</div>
+
+<!-- ✅ 검색/필터 영역 -->
+<section class="bg-white p-4 rounded shadow mb-6">
+  <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <input type="text" name="search" value="{{ request.GET.search }}" placeholder="이름 or 전화번호" class="border p-2 rounded">
+    <select name="grade" class="border p-2 rounded">
+      <option value="">등급 전체</option>
+      <option value="충성" {% if request.GET.grade == "충성" %}selected{% endif %}>충성</option>
+      <option value="가망" {% if request.GET.grade == "가망" %}selected{% endif %}>가망</option>
+      <option value="유령" {% if request.GET.grade == "유령" %}selected{% endif %}>유령</option>
+    </select>
+    <select name="attribute" class="border p-2 rounded">
+      <option value="">속성 전체</option>
+      <option value="인콜" {% if request.GET.attribute == "인콜" %}selected{% endif %}>인콜</option>
+      <option value="카드" {% if request.GET.attribute == "카드" %}selected{% endif %}>카드</option>
+      <option value="지인" {% if request.GET.attribute == "지인" %}selected{% endif %}>지인</option>
+    </select>
+    <button type="submit" class="bg-blue-600 text-white rounded px-4 py-2">검색</button>
+  </form>
+</section>
+
+<!-- ✅ 고객 리스트 테이블 -->
+<section class="bg-white p-4 rounded shadow">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="py-2 px-3 text-left">이름</th>
+        <th class="py-2 px-3 text-left">전화번호</th>
+        <th class="py-2 px-3 text-left">생년월일</th>
+        <th class="py-2 px-3 text-left">등급</th>
+        <th class="py-2 px-3 text-left">속성</th>
+        <th class="py-2 px-3 text-left">우선순위</th>
+        <th class="py-2 px-3 text-left">등록일</th>
+        <th class="py-2 px-3 text-left">관리</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for customer in customers %}
+      <tr class="border-t hover:bg-gray-50">
+        <td class="py-2 px-3">{{ customer.name }}</td>
+        <td class="py-2 px-3">
+          {{ customer.phone_encrypted|slice:":3" }}-****-{{ customer.phone_encrypted|slice:"-4:" }}
+        </td>
+        <td class="py-2 px-3">
+          {{ customer.birth_encrypted|slice:":4" }}-{{ customer.birth_encrypted|slice:"4:6" }}-{{ customer.birth_encrypted|slice:"6:8" }}
+        </td>
+        <td class="py-2 px-3">{{ customer.grade }}</td>
+        <td class="py-2 px-3">{{ customer.attribute }}</td>
+        <td class="py-2 px-3">{{ customer.priority }}</td>
+        <td class="py-2 px-3">{{ customer.created_at|date:"Y-m-d" }}</td>
+        <td class="py-2 px-3 space-x-2">
+          <a href="/customer/{{ customer.id }}/edit/" class="text-blue-600 text-sm">수정</a>
+          <a href="/customer/{{ customer.id }}/delete/" class="text-red-600 text-sm">삭제</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8" class="text-center text-gray-500 py-4">고객이 없습니다.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

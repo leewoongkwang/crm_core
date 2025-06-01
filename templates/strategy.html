@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}영업방향 전략 수립{% endblock %}
+{% block page_title %}영업방향 전략 수립{% endblock %}
+
+{% block content %}
+<!-- ✅ 목표 수치 입력 -->
+<section class="bg-white p-6 rounded shadow mb-6">
+  <h2 class="text-lg font-bold mb-4">🎯 전략 목표 수치</h2>
+  <form action="#" method="post" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <label>월 계약 목표<input type="number" class="w-full border p-2 rounded" name="monthly_cpc_goal"></label>
+    <label>주간 계약 목표<input type="number" class="w-full border p-2 rounded" name="weekly_cpc_goal"></label>
+    <label>1분콜 목표<input type="number" class="w-full border p-2 rounded" name="daily_call_1min"></label>
+    <label>2분콜 목표<input type="number" class="w-full border p-2 rounded" name="daily_call_2min"></label>
+    <label>고객 제안 수<input type="number" class="w-full border p-2 rounded" name="daily_proposals"></label>
+    <label>방문 제안 수<input type="number" class="w-full border p-2 rounded" name="daily_visit_proposals"></label>
+    <label>밴드 인증 수<input type="number" class="w-full border p-2 rounded" name="daily_band_verified"></label>
+    <label>카드가망 확보<input type="number" class="w-full border p-2 rounded" name="daily_prospective_secure"></label>
+  </form>
+</section>
+
+<!-- ✅ 전략 메모 -->
+<section class="bg-white p-6 rounded shadow mb-6">
+  <h2 class="text-lg font-bold mb-2">🧠 전략 메모</h2>
+  <textarea rows="4" class="w-full border p-2 rounded" placeholder="이번 달 다짐 또는 전략 요약을 자유롭게 입력하세요. (마크다운 지원 가능)"></textarea>
+  <button class="mt-2 px-4 py-2 bg-blue-600 text-white rounded">저장</button>
+</section>
+
+<!-- ✅ 타겟리스트 -->
+<section class="bg-white p-6 rounded shadow mb-6">
+  <h2 class="text-lg font-bold mb-4">🎯 타겟리스트</h2>
+  <table class="w-full table-auto">
+    <thead>
+      <tr class="bg-gray-100 text-sm text-left">
+        <th class="py-2 px-4">이름</th>
+        <th class="py-2 px-4">성별</th>
+        <th class="py-2 px-4">나이</th>
+        <th class="py-2 px-4">제안상품</th>
+        <th class="py-2 px-4">속성</th>
+        <th class="py-2 px-4">등급</th>
+        <th class="py-2 px-4">메모</th>
+        <th class="py-2 px-4">터치 전략</th>
+        <th class="py-2 px-4">삭제</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="border-t">
+        <td class="py-2 px-4">홍길동</td>
+        <td class="py-2 px-4">M</td>
+        <td class="py-2 px-4">35</td>
+        <td class="py-2 px-4">OO생명 종신보험</td>
+        <td class="py-2 px-4">인콜</td>
+        <td class="py-2 px-4">가망</td>
+        <td class="py-2 px-4">자영업자, 보장 미흡</td>
+        <td class="py-2 px-4">유선콜 → 리포트 → 제안</td>
+        <td class="py-2 px-4"><button class="text-red-500 text-sm">삭제</button></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ✅ 히스토리 테이블 -->
+<section class="bg-white p-6 rounded shadow">
+  <h2 class="text-lg font-bold mb-4">📜 전략 히스토리</h2>
+  <table class="w-full table-auto text-sm">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="py-2 px-4">연도</th>
+        <th class="py-2 px-4">월</th>
+        <th class="py-2 px-4">계약목표</th>
+        <th class="py-2 px-4">입력일</th>
+        <th class="py-2 px-4">메모</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="border-t">
+        <td class="py-2 px-4">2025</td>
+        <td class="py-2 px-4">05</td>
+        <td class="py-2 px-4">10건</td>
+        <td class="py-2 px-4">2025-05-01</td>
+        <td class="py-2 px-4">"고객 제안 비중 확대"</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+{% endblock %}
