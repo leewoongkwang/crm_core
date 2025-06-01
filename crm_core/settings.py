@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 👉 CRM 앱 목록
+    'accounts',
     'dashboard',
-    'users',
     'customers',
     'reports',
     'contracts',
@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'touchlog',
 
 ]
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'accounts.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

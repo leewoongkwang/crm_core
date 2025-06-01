@@ -23,7 +23,11 @@ crm_core/
 ├── reports/        # 리포트 업로드 및 파싱
 ├── strategy/       # 영업 전략 수립
 ├── touchlog/       # 고객 접촉 기록
+<<<<<<< HEAD
 ├── accounts/          # 사용자 모델 (설계사)
+=======
+├── accounts/       # 사용자 모델 (설계사)
+>>>>>>> 0be7640 (앱 구조 리팩터링: dashboard 제거, 기능별 앱 분리 완료)
 ├── templates/      # 템플릿 HTML
 │   ├── base.html
 │   ├── customer/

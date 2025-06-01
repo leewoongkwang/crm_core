@@ -1,6 +1,7 @@
 from django.db import models
-from users.models import User
 from customers.models import Customer
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 class Report(models.Model):
