@@ -23,7 +23,7 @@ crm_core/
 ├── reports/        # 리포트 업로드 및 파싱
 ├── strategy/       # 영업 전략 수립
 ├── touchlog/       # 고객 접촉 기록
-├── users/          # 사용자 모델 (설계사)
+├── accounts/          # 사용자 모델 (설계사)
 ├── templates/      # 템플릿 HTML
 │   ├── base.html
 │   ├── customer/
