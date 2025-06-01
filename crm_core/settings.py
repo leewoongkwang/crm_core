@@ -39,9 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 👉 CRM 앱 목록
     'accounts',
-    'dashboard',
+    'home',
     'customers',
     'reports',
+    'analysis',
     'contracts',
     'strategy',
     'activity',
