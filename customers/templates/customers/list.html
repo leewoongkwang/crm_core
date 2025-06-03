@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}고객 목록{% endblock %}
+{% block page_title %}고객 목록{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-4">
+  <h2 class="text-xl font-bold">📋 고객 목록</h2>
+  <a href="{% url 'customers:customer_add' %}" class="bg-blue-600 text-white px-4 py-2 rounded text-sm">+ 신규 고객 등록</a>
+</div>
+
+<section class="bg-white p-4 rounded shadow mb-6">
+  <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <input type="text" name="search" value="{{ request.GET.search }}" placeholder="이름 or 전화번호" class="border p-2 rounded">
+    <select name="grade" class="border p-2 rounded">
+      <option value="">등급 전체</option>
+      <option value="충성" {% if request.GET.grade == "충성" %}selected{% endif %}>충성</option>
+      <option value="가망" {% if request.GET.grade == "가망" %}selected{% endif %}>가망</option>
+      <option value="유령" {% if request.GET.grade == "유령" %}selected{% endif %}>유령</option>
+    </select>
+    <select name="attribute" class="border p-2 rounded">
+      <option value="">속성 전체</option>
+      <option value="인콜" {% if request.GET.attribute == "인콜" %}selected{% endif %}>인콜</option>
+      <option value="카드" {% if request.GET.attribute == "카드" %}selected{% endif %}>카드</option>
+      <option value="지인" {% if request.GET.attribute == "지인" %}selected{% endif %}>지인</option>
+    </select>
+    <button type="submit" class="bg-blue-600 text-white rounded px-4 py-2">검색</button>
+  </form>
+</section>
+
+<section class="bg-white p-4 rounded shadow">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-100">
+      <tr>
+        {% comment%}
+         "정렬 링크에 page 유지 필요 없음, 정렬만 적용" 
+        {% endcomment%}
+        <th class="py-2 px-3"><a href="?sort=name">이름</a></th>
+        <th class="py-2 px-3">성별</th>
+        <th class="py-2 px-3">전화번호</th>
+        <th class="py-2 px-3">생년월일</th>
+        <th class="py-2 px-3"><a href="?sort=grade">등급</a></th>
+        <th class="py-2 px-3">속성</th>
+        <th class="py-2 px-3">성향</th>
+        <th class="py-2 px-3">라포</th>
+        <th class="py-2 px-3">타겟</th>
+        <th class="py-2 px-3">터치</th>
+        <th class="py-2 px-3"><a href="?sort=-created_at">등록일</a></th>
+        <th class="py-2 px-3">메모</th>
+        <th class="py-2 px-3">관리</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for customer in page_obj %}
+      <tr class="border-t hover:bg-gray-50">
+        <td class="py-2 px-3">{{ customer.name }}</td>
+        <td class="py-2 px-3">{{ customer.gender }}</td>
+        <td class="py-2 px-3">
+          {{ customer.phone_encrypted|slice:":3" }}-****-{{ customer.phone_encrypted|slice:"-4:" }}
+        </td>
+        <td class="py-2 px-3">
+          {{ customer.birth_encrypted|slice:":4" }}-{{ customer.birth_encrypted|slice:"4:6" }}-{{ customer.birth_encrypted|slice:"6:8" }}
+        </td>
+        <td class="py-2 px-3">{{ customer.grade }}</td>
+        <td class="py-2 px-3">{{ customer.attribute }}</td>
+        <td class="py-2 px-3">{{ customer.propensity }}</td>
+        <td class="py-2 px-3">{{ customer.intimacy }}</td>
+        <td class="py-2 px-3">{% if customer.is_target_customer %}✅{% else %}❌{% endif %}</td>
+        <td class="py-2 px-3">{% if customer.is_active_touching %}🟢{% else %}⚪{% endif %}</td>
+        <td class="py-2 px-3">{{ customer.created_at|date:"Y-m-d" }}</td>
+        <td class="py-2 px-3 truncate max-w-xs">{{ customer.memo|truncatechars:20 }}</td>
+        <td class="py-2 px-3 space-x-2">
+          <a href="{% url 'customers:customer_edit' customer.id %}" class="text-blue-600 text-sm">수정</a>
+          <a href="{% url 'customers:customer_delete' customer.id %}" class="text-red-600 text-sm">삭제</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- ✅ 페이지네이션 -->
+  <div class="mt-4 flex justify-center space-x-2">
+    {% if page_obj.has_previous %}
+      <a href="?page=1{% if sort %}&sort={{ sort }}{% endif %}" class="px-3 py-1 border rounded">« 처음</a>
+      <a href="?page={{ page_obj.previous_page_number }}{% if sort %}&sort={{ sort }}{% endif %}" class="px-3 py-1 border rounded">‹ 이전</a>
+    {% endif %}
+
+    <span class="px-4 py-1 text-sm">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% if sort %}&sort={{ sort }}{% endif %}" class="px-3 py-1 border rounded">다음 ›</a>
+      <a href="?page={{ page_obj.paginator.num_pages }}{% if sort %}&sort={{ sort }}{% endif %}" class="px-3 py-1 border rounded">끝 »</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

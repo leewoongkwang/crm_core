@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}고객 정보 입력{% endblock %}
+{% block page_title %}고객 정보 입력{% endblock %}
+
+{% block content %}
+<form method="post" class="bg-white p-6 rounded shadow space-y-6">
+  {% csrf_token %}
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {% for field in form.visible_fields %}
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">{{ field.label_tag }}</label>
+
+        {% if field.name == "birth_encrypted" %}
+          <input type="text" name="birth_encrypted"
+                 maxlength="8" inputmode="numeric" pattern="\d*"
+                 oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);"
+                 class="w-full p-2 border rounded"
+                 placeholder="예: 19910802"
+                 value="{{ field.value|default_if_none:'' }}">
+        {% elif field.name == "phone_encrypted" %}
+          <input type="text" name="phone_encrypted"
+                 maxlength="11" inputmode="numeric" pattern="\d*"
+                 oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11);"
+                 class="w-full p-2 border rounded"
+                 placeholder="예: 01012345678"
+                 value="{{ field.value|default_if_none:'' }}">
+        {% else %}
+          {{ field }}
+        {% endif %}
+
+        {% if field.errors %}
+          <p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">저장</button>
+</form>
+{% endblock %}

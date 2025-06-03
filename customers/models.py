@@ -13,6 +13,10 @@ class Customer(models.Model):
         ('지인', '지인'),
         ('가족', '가족'),
     )
+    GENDER_CHOICES = (
+    ("M", "남성"),
+    ("F", "여성"),
+    )
     GRADE_CHOICES = (
         ('충성', '충성'),
         ('가망', '가망'),
@@ -39,7 +43,7 @@ class Customer(models.Model):
     name = models.CharField(max_length=32)
     phone_encrypted = models.CharField(max_length=64)
     birth_encrypted = models.CharField(max_length=64)
-    gender = models.CharField(max_length=1)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
 
     attribute = models.CharField(max_length=16, choices=ATTRIBUTE_CHOICES, blank=True)
     grade = models.CharField(max_length=16, choices=GRADE_CHOICES, blank=True)
