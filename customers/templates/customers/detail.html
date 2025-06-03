@@ -8,15 +8,16 @@
 <section class="bg-white p-6 rounded shadow mb-6">
   <h2 class="text-lg font-bold mb-4">👤 고객 프로필</h2>
   <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-    <div><strong>이름:</strong> 홍길동</div>
-    <div><strong>성별:</strong> M</div>
-    <div><strong>보험나이:</strong> 34세</div>
-    <div><strong>고객등급:</strong> 가망</div>
-    <div><strong>고객속성:</strong> 인콜</div>
-    <div><strong>우선순위:</strong> 상</div>
-    <div><strong>성향:</strong> 니즈확실</div>
-    <div><strong>라포형성도:</strong> 친함</div>
-    <div><strong>등록일:</strong> 2025-05-01</div>
+    <div><strong>이름:</strong> {{ customer.name }}</div>
+    <div><strong>성별:</strong> {{ customer.get_gender_display }}</div>
+    <div><strong>보험나이:</strong> {{ customer.insurance_age }}</div>
+    <div><strong>고객등급:</strong> {{ customer.grade }}</div>
+    <div><strong>고객속성:</strong> {{ customer.attribute }}</div>
+    <div><strong>우선순위:</strong> {{ customer.priority }}</div>
+    <div><strong>성향:</strong> {{ customer.propensity }}</div>
+    <div><strong>라포형성도:</strong> {{ customer.intimacy }}</div>
+    <div><strong>등록일:</strong> {{ customer.created_at|date:"Y-m-d" }}</div>
+
   </div>
 </section>
 

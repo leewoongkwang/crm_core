@@ -2,6 +2,9 @@
 
 from django.db import models
 from django.contrib.auth import get_user_model
+from utils.age import calculate_insurance_age
+from utils.age import calculate_insurance_birthday
+from datetime import date
 User = get_user_model()
 
 class Customer(models.Model):
@@ -67,8 +70,34 @@ class Customer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.name
+    @property
+    def insurance_age(self):
+        try:
+            print(">> DEBUG - raw:", self.birth_encrypted)
+            if not self.birth_encrypted or len(self.birth_encrypted) != 8:
+                print(">> SKIPPED - Invalid birth format")
+                return None
+            birth = self.birth_encrypted  # e.g. 19910802
+            birth_date_str = f"{birth[:4]}-{birth[4:6]}-{birth[6:]}"
+            print(">> DEBUG - parsed birth:", birth_date_str)
+            today_str = date.today().isoformat()
+            age = calculate_insurance_age(birth_date_str, today_str)
+            print(">> DEBUG - insurance age:", age)
+            return age
+        except Exception as e:
+            print(">> ERROR:", e)
+            return None
+
+    @property
+    def insurance_birthday(self):
+        if not self.birth_encrypted:
+            return None
+        try:
+            birth = self.birth_encrypted
+            birth_date_str = f"{birth[:4]}-{birth[4:6]}-{birth[6:]}"
+            return calculate_insurance_birthday(birth_date_str)
+        except:
+            return None
 
 class Branch(models.Model):
     name = models.CharField(max_length=64)

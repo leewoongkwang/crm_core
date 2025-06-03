@@ -31,13 +31,10 @@
   <table class="w-full text-sm">
     <thead class="bg-gray-100">
       <tr>
-        {% comment%}
-         "정렬 링크에 page 유지 필요 없음, 정렬만 적용" 
-        {% endcomment%}
         <th class="py-2 px-3"><a href="?sort=name">이름</a></th>
         <th class="py-2 px-3">성별</th>
-        <th class="py-2 px-3">전화번호</th>
-        <th class="py-2 px-3">생년월일</th>
+        <th class="py-2 px-3">보험나이</th>
+        <th class="py-2 px-3">상령일</th>
         <th class="py-2 px-3"><a href="?sort=grade">등급</a></th>
         <th class="py-2 px-3">속성</th>
         <th class="py-2 px-3">성향</th>
@@ -51,15 +48,11 @@
     </thead>
     <tbody>
       {% for customer in page_obj %}
-      <tr class="border-t hover:bg-gray-50">
+      <tr class="border-t hover:bg-gray-50 cursor-pointer" data-id="{{ customer.id }}">
         <td class="py-2 px-3">{{ customer.name }}</td>
         <td class="py-2 px-3">{{ customer.gender }}</td>
-        <td class="py-2 px-3">
-          {{ customer.phone_encrypted|slice:":3" }}-****-{{ customer.phone_encrypted|slice:"-4:" }}
-        </td>
-        <td class="py-2 px-3">
-          {{ customer.birth_encrypted|slice:":4" }}-{{ customer.birth_encrypted|slice:"4:6" }}-{{ customer.birth_encrypted|slice:"6:8" }}
-        </td>
+        <td class="py-2 px-3">{{ customer.insurance_age }}</td>
+        <td class="py-2 px-3">{{ customer.insurance_birthday }}</td>
         <td class="py-2 px-3">{{ customer.grade }}</td>
         <td class="py-2 px-3">{{ customer.attribute }}</td>
         <td class="py-2 px-3">{{ customer.propensity }}</td>
@@ -77,7 +70,6 @@
     </tbody>
   </table>
 
-  <!-- ✅ 페이지네이션 -->
   <div class="mt-4 flex justify-center space-x-2">
     {% if page_obj.has_previous %}
       <a href="?page=1{% if sort %}&sort={{ sort }}{% endif %}" class="px-3 py-1 border rounded">« 처음</a>
@@ -92,4 +84,15 @@
     {% endif %}
   </div>
 </section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("tr[data-id]").forEach(row => {
+      row.addEventListener("dblclick", () => {
+        const id = row.getAttribute("data-id");
+        window.location.href = `/customer/${id}/`;
+      });
+    });
+  });
+</script>
 {% endblock %}
