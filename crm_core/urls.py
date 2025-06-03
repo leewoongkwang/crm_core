@@ -7,7 +7,10 @@ urlpatterns = [
     path("home/", include("home.urls")),
     path("customer/", include("customers.urls")),
     path('strategy/', include('strategy.urls')),
-    path("touch/", include("touchlog.urls")),
+    path("touchlog/", include("touchlog.urls")),
+    path("reports/", include("reports.urls")),
     path("analysis/", include("analysis.urls")),
+    path("contracts/", include("contracts.urls")),
+
 
 ]

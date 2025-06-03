@@ -1,0 +1,25 @@
+{% load humanize %}
+<table class="table-auto w-full text-sm">
+  <thead>
+    <tr class="bg-gray-100">
+      <th class="p-2 text-left">보험상품</th>
+      <th class="p-2 text-left">계약일</th>
+      <th class="p-2 text-left">상태</th>
+      <th class="p-2 text-left">보험료</th>
+      <th class="p-2 text-left">만기일</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for contract in contracts %}
+    <tr class="border-t">
+      <td class="p-2">{{ contract.name }}</td>
+      <td class="p-2">{{ contract.signed_at|date:"Y-m-d" }}</td>
+      <td class="p-2">{{ contract.status }}</td>
+      <td class="p-2">{{ contract.premium|intcomma }}원</td>
+      <td class="p-2">{{ contract.expired_at|date:"Y-m-d" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" class="text-center text-gray-400 p-4">계약이 없습니다.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>

@@ -1,0 +1,20 @@
+<table class="table-auto w-full text-sm">
+  <thead>
+    <tr class="bg-gray-100">
+      <th class="p-2 text-left">날짜</th>
+      <th class="p-2 text-left">유형</th>
+      <th class="p-2 text-left">요약내용</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for log in touchlogs %}
+    <tr class="border-t">
+      <td class="p-2">{{ log.touched_at|date:"Y-m-d H:i" }}</td>
+      <td class="p-2">{{ log.type }}</td>
+      <td class="p-2">{{ log.content|truncatewords:10 }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3" class="text-center text-gray-400 p-4">접촉 이력이 없습니다.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>

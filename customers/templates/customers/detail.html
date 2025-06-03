@@ -45,13 +45,53 @@
 <!-- ✅ 하단 탭 구조 -->
 <section>
   <div class="mb-2 border-b flex space-x-4 text-sm font-semibold">
-    <button class="py-2 px-4 border-b-2 border-blue-600">14터치 이력</button>
-    <button class="py-2 px-4 hover:text-blue-600">리포트 내역</button>
-    <button class="py-2 px-4 hover:text-blue-600">계약정보</button>
-    <button class="py-2 px-4 hover:text-blue-600">활동기록</button>
+    <button class="py-2 px-4 hover:text-blue-600" onclick="loadCustomerTab('touchlog', this)">14터치 이력</button>
+    <button class="py-2 px-4 hover:text-blue-600" onclick="loadCustomerTab('reports', this)">리포트 내역</button>
+    <button class="py-2 px-4 hover:text-blue-600" onclick="loadCustomerTab('contracts', this)">계약정보</button>
+    <button class="py-2 px-4 hover:text-blue-600" onclick="loadCustomerTab('activities', this)">활동기록</button>
   </div>
-  <div class="bg-white p-6 rounded shadow">
-    <p class="text-gray-500">선택된 탭의 이력 데이터가 여기에 비동기로 로딩됩니다.</p>
+  <div id="tab-content" class="bg-white p-6 rounded shadow text-sm text-gray-600">
+    <p>불러오는 중...</p>
   </div>
 </section>
+
+<script>
+    function loadCustomerTab(tabName, buttonEl) {
+    const customerId = "{{ customer.id }}";
+    const container = document.getElementById("tab-content");
+    
+    // 버튼 강조
+    document.querySelectorAll("section button").forEach(btn => {
+      btn.classList.remove("border-b-2", "border-blue-600");
+    });
+    if (buttonEl) {
+      buttonEl.classList.add("border-b-2", "border-blue-600");
+    }
+  
+    // 탭 이름에 따라 API 경로 분기
+    let url = "";
+    if (tabName === "touchlog") {
+      url = `/touchlog/customer/${customerId}/partial/`;
+    } else if (tabName === "reports") {
+      url = `/reports/customer/${customerId}/partial/`;
+    } else if (tabName === "contracts") {
+      url = `/contracts/customer/${customerId}/partial/`;
+    } else if (tabName === "activities") {
+      url = `/activities/customer/${customerId}/partial/`;
+    } else {
+      container.innerHTML = "<p class='text-red-600'>존재하지 않는 탭</p>";
+      return;
+    }
+  
+    // AJAX 호출
+    container.innerHTML = "<p class='text-gray-400'>불러오는 중...</p>";
+    fetch(url)
+      .then(res => res.text())
+      .then(html => container.innerHTML = html)
+      .catch(() => container.innerHTML = "<p class='text-red-600'>탭 로딩 실패</p>");
+  }
+
+  // 페이지 진입 시 기본 탭 로딩
+  window.addEventListener("DOMContentLoaded", () => loadCustomerTab("touchlog"));
+</script>
 {% endblock %}

@@ -1,8 +1,8 @@
 from django.urls import path
-from .views import analysis_view
+from reports.views.customer_tab import customer_report_partial
 
 app_name = "reports"
 
 urlpatterns = [
-    path("<int:report_id>/", analysis_view, name="analysis_detail"),
+    path("customer/<int:pk>/partial/", customer_report_partial, name="report_tab_customer"),
 ]
