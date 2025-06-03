@@ -14,7 +14,7 @@ def task_entry_view(request):
 
     # KPI 실적 객체 생성/조회
     kpi_instance, _ = DailyStandardActivity.objects.get_or_create(user=request.user, date=today)
-    kpi_form = KPIForm(request.POST or None, instance=kpi_instance)
+    kpi_form = KPIForm(request.POST if 'save_kpi' in request.POST else None, instance=kpi_instance)
 
     # 전략값 로드 (year + month 기준)
     strategy = Strategy.objects.filter(
@@ -22,7 +22,7 @@ def task_entry_view(request):
     ).first()
 
     # 고객 접촉 기록 폼 (빈 인스턴스)
-    touch_form = TouchForm(request.POST or None)
+    touch_form = TouchForm(request.POST if 'save_touch' in request.POST else None)
 
     if request.method == 'POST':
         if 'save_kpi' in request.POST and kpi_form.is_valid():
@@ -74,12 +74,22 @@ def calculate_progress(strategy, actual):
         target = getattr(strategy, field, 0)
         value = getattr(actual, field, 0)
         percent = round((value / target) * 100) if target > 0 else 0
+        percent = min(percent, 100)  # 추가
+        # ⬇️ 색상 분기 조건 추가
+        if percent >= 100:
+            css = "bg-green-500"
+        elif percent >= 50:
+            css = "bg-yellow-400"
+        else:
+            css = "bg-red-400"
+
         progress.append({
             "label": label,
             "value": value,
             "target": target,
             "percent": percent,
-            "css": "bg-yellow-500" if percent >= 100 else "bg-red-500",
+            "css": css,
         })
 
     return progress
+

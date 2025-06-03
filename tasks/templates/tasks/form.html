@@ -5,6 +5,8 @@
 {% block page_title %}하루 업무 기록 (KPI + 고객 접촉){% endblock %}
 
 {% block content %}
+
+<!-- ✅ KPI 저장 폼 (form 태그 1) -->
 <form method="post">
   {% csrf_token %}
   {% if messages %}
@@ -15,73 +17,75 @@
     </div>
   {% endif %}
 
-  <!-- 📊 KPI 진행률 카드 -->
-  {% if progress_cards %}
-  <section class="bg-white p-6 rounded shadow mb-6">
-    <h2 class="text-lg font-bold mb-4">📊 KPI 진행률</h2>
-    <div class="space-y-4 text-sm">
-      {% for card in progress_cards %}
-      <div>
-        <div class="flex justify-between mb-1">
-          <span>{{ card.label }} ({{ card.value }}/{{ card.target }})</span>
-          <span>{{ card.percent }}%</span>
+  <!-- 📊 KPI 진행률 + 🎯 KPI 수치 입력 2열 병렬 -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <!-- 좌측: KPI 진행률 -->
+    {% if progress_cards %}
+    <section class="bg-white p-6 rounded shadow">
+      <h2 class="text-lg font-bold mb-4">📊 KPI 진행률</h2>
+      <div class="space-y-4 text-sm">
+        {% for card in progress_cards %}
+        <div>
+          <div class="flex justify-between mb-1">
+            <span>{{ card.label }} ({{ card.value }}/{{ card.target }})</span>
+            <span>{{ card.percent }}%</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded h-3">
+            <div class="{{ card.css }} h-3 rounded" style="width: {{ card.percent }}%"></div>
+          </div>
         </div>
-        <div class="w-full bg-gray-200 rounded h-3">
-          <div class="{{ card.css }} h-3 rounded" style="width: {{ card.percent }}%"></div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- 우측: KPI 수치 입력 -->
+    <section class="bg-white p-6 rounded shadow">
+      <h2 class="text-lg font-bold mb-4">🎯 KPI 수치 입력</h2>
+      <div class="space-y-4 text-sm">
+        <div class="grid grid-cols-1 gap-4">
+          <label class="flex flex-col">
+            <span>1분콜</span>
+            {{ kpi_form.daily_call_1min|add_class:"w-full border p-2 rounded" }}
+            {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_call_1min }}</span>{% endif %}
+          </label>
+          <label class="flex flex-col">
+            <span>2분콜</span>
+            {{ kpi_form.daily_call_2min|add_class:"w-full border p-2 rounded" }}
+            {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_call_2min }}</span>{% endif %}
+          </label>
+          <label class="flex flex-col">
+            <span>고객 제안</span>
+            {{ kpi_form.daily_proposals|add_class:"w-full border p-2 rounded" }}
+            {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_proposals }}</span>{% endif %}
+          </label>
+          <label class="flex flex-col">
+            <span>방문 제안</span>
+            {{ kpi_form.daily_visit_proposals|add_class:"w-full border p-2 rounded" }}
+            {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_visit_proposals }}</span>{% endif %}
+          </label>
+          <label class="flex flex-col">
+            <span>가망 확보</span>
+            {{ kpi_form.daily_grade_potential|add_class:"w-full border p-2 rounded" }}
+            {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_grade_potential }}</span>{% endif %}
+          </label>
+          <label class="flex flex-col">
+            <span>밴드 인증</span>
+            {{ kpi_form.daily_band_verified|add_class:"w-full border p-2 rounded" }}
+            {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_band_verified }}</span>{% endif %}
+          </label>
         </div>
       </div>
-      {% endfor %}
-    </div>
-  </section>
-  {% endif %}
+      <div class="flex justify-end mt-6">
+        <button type="submit" name="save_kpi" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">KPI 저장</button>
+      </div>
+    </section>
+  </div>
+</form>
 
-  <!-- 🎯 KPI 입력 -->
-  <section class="bg-white p-6 rounded shadow mb-6">
-    <h2 class="text-lg font-bold mb-4">🎯 KPI 수치 입력</h2>
-    <div class="space-y-4 text-sm">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <label class="flex flex-col">
-          <span>1분콜</span>
-          {{ kpi_form.daily_call_1min|add_class:"w-full border p-2 rounded" }}
-          {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_call_1min }}</span>{% endif %}
-        </label>
-        <label class="flex flex-col">
-          <span>2분콜</span>
-          {{ kpi_form.daily_call_2min|add_class:"w-full border p-2 rounded" }}
-          {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_call_2min }}</span>{% endif %}
-        </label>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <label class="flex flex-col">
-          <span>고객 제안</span>
-          {{ kpi_form.daily_proposals|add_class:"w-full border p-2 rounded" }}
-          {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_proposals }}</span>{% endif %}
-        </label>
-        <label class="flex flex-col">
-          <span>방문 제안</span>
-          {{ kpi_form.daily_visit_proposals|add_class:"w-full border p-2 rounded" }}
-          {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_visit_proposals }}</span>{% endif %}
-        </label>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <label class="flex flex-col">
-          <span>가망 확보</span>
-          {{ kpi_form.daily_grade_potential|add_class:"w-full border p-2 rounded" }}
-          {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_grade_potential }}</span>{% endif %}
-        </label>
-        <label class="flex flex-col">
-          <span>밴드 인증</span>
-          {{ kpi_form.daily_band_verified|add_class:"w-full border p-2 rounded" }}
-          {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_band_verified }}</span>{% endif %}
-        </label>
-      </div>
-    </div>
-    <div class="flex justify-end mt-6">
-      <button type="submit" name="save_kpi" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">KPI 저장</button>
-    </div>
-  </section>
-
-  <!-- 🤝 고객 접촉 입력 -->
+<!-- ✅ 고객 접촉 기록 폼 (form 태그 2) -->
+<form method="post">
+  {% csrf_token %}
   <section class="bg-white p-6 rounded shadow mb-6">
     <h2 class="text-lg font-bold mb-4">🤝 고객 접촉 기록</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
@@ -93,65 +97,66 @@
       <button type="submit" name="save_touch" class="px-4 py-2 bg-green-600 text-white rounded">접촉 기록 저장</button>
     </div>
   </section>
-
-  <!-- 🗂 KPI 히스토리 -->
-  {% if kpi_history %}
-  <section class="bg-white p-6 rounded shadow mb-6">
-    <h2 class="text-lg font-bold mb-4">🗂 KPI 히스토리</h2>
-    <table class="w-full table-auto text-sm">
-      <thead class="bg-gray-100">
-        <tr>
-          <th class="py-2 px-4">날짜</th>
-          <th class="py-2 px-4">1분</th>
-          <th class="py-2 px-4">2분</th>
-          <th class="py-2 px-4">제안</th>
-          <th class="py-2 px-4">방문</th>
-          <th class="py-2 px-4">가망</th>
-          <th class="py-2 px-4">밴드</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for a in kpi_history %}
-        <tr class="border-t">
-          <td class="py-2 px-4">{{ a.date }}</td>
-          <td class="py-2 px-4">{{ a.daily_call_1min }}</td>
-          <td class="py-2 px-4">{{ a.daily_call_2min }}</td>
-          <td class="py-2 px-4">{{ a.daily_proposals }}</td>
-          <td class="py-2 px-4">{{ a.daily_visit_proposals }}</td>
-          <td class="py-2 px-4">{{ a.daily_grade_potential }}</td>
-          <td class="py-2 px-4">{{ a.daily_band_verified }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </section>
-  {% endif %}
-
-  <!-- 📋 고객 접촉 히스토리 -->
-  {% if touch_history %}
-  <section class="bg-white p-6 rounded shadow">
-    <h2 class="text-lg font-bold mb-4">📋 고객 접촉 히스토리</h2>
-    <table class="w-full table-auto text-sm">
-      <thead class="bg-gray-100">
-        <tr>
-          <th class="py-2 px-4">고객명</th>
-          <th class="py-2 px-4">방식</th>
-          <th class="py-2 px-4">메모</th>
-          <th class="py-2 px-4">날짜</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for t in touch_history %}
-        <tr class="border-t">
-          <td class="py-2 px-4">{{ t.customer }}</td>
-          <td class="py-2 px-4">{{ t.get_method_display }}</td>
-          <td class="py-2 px-4">{{ t.memo|truncatechars:20 }}</td>
-          <td class="py-2 px-4">{{ t.created_at|date:"Y-m-d H:i" }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </section>
-  {% endif %}
 </form>
+
+<!-- 🗂 KPI 히스토리 -->
+{% if kpi_history %}
+<section class="bg-white p-6 rounded shadow mb-6">
+  <h2 class="text-lg font-bold mb-4">🗂 KPI 히스토리</h2>
+  <table class="w-full table-auto text-sm">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="py-2 px-4">날짜</th>
+        <th class="py-2 px-4">1분</th>
+        <th class="py-2 px-4">2분</th>
+        <th class="py-2 px-4">제안</th>
+        <th class="py-2 px-4">방문</th>
+        <th class="py-2 px-4">가망</th>
+        <th class="py-2 px-4">밴드</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in kpi_history %}
+      <tr class="border-t">
+        <td class="py-2 px-4">{{ a.date }}</td>
+        <td class="py-2 px-4">{{ a.daily_call_1min }}</td>
+        <td class="py-2 px-4">{{ a.daily_call_2min }}</td>
+        <td class="py-2 px-4">{{ a.daily_proposals }}</td>
+        <td class="py-2 px-4">{{ a.daily_visit_proposals }}</td>
+        <td class="py-2 px-4">{{ a.daily_grade_potential }}</td>
+        <td class="py-2 px-4">{{ a.daily_band_verified }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endif %}
+
+<!-- 📋 고객 접촉 히스토리 -->
+{% if touch_history %}
+<section class="bg-white p-6 rounded shadow">
+  <h2 class="text-lg font-bold mb-4">📋 고객 접촉 히스토리</h2>
+  <table class="w-full table-auto text-sm">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="py-2 px-4">고객명</th>
+        <th class="py-2 px-4">방식</th>
+        <th class="py-2 px-4">메모</th>
+        <th class="py-2 px-4">날짜</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in touch_history %}
+      <tr class="border-t">
+        <td class="py-2 px-4">{{ t.customer }}</td>
+        <td class="py-2 px-4">{{ t.get_method_display }}</td>
+        <td class="py-2 px-4">{{ t.memo|truncatechars:20 }}</td>
+        <td class="py-2 px-4">{{ t.created_at|date:"Y-m-d H:i" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endif %}
+
 {% endblock %}
