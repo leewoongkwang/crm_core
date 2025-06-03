@@ -10,15 +10,24 @@
 ```
 crm_core/
 ├── customers/                  # 고객 관리 앱
-│   ├── models.py               # 고객 정보 모델 정의
-│   ├── forms.py                # CustomerForm: 등록/수정용
-│   ├── views.py                # 고객 CRUD + ListView
-│   ├── urls.py                 # /customer/ URL 정의
-│   └── templates/customers/
-│       ├── list.html           # 고객 목록
-│       ├── form.html           # 등록/수정 공용 폼
-│       ├── detail.html         # 고객 상세 보기
-│       └── delete.html         # 삭제 확인
+│   ├── views/                  # 기능별 뷰 분리
+│   │   ├── __init__.py         # 각 기능 import 정의
+│   │   ├── list.py             # 고객 목록 조회
+│   │   ├── create.py           # 신규 고객 등록
+│   │   ├── update.py           # 고객 정보 수정
+│   │   ├── delete.py           # 고객 삭제
+│   │   └── detail.py           # 고객 상세 보기
+│   │
+│   ├── templates/
+│   │   └── customers/          # 템플릿 구성
+│   │       ├── list.html       # 고객 목록 UI
+│   │       ├── form.html       # 등록/수정 공용 폼
+│   │       ├── delete.html     # 삭제 확인
+│   │       └── detail.html     # 상세 정보
+│   │
+│   ├── forms.py               # CustomerForm 정의
+│   ├── models.py              # Customer 모델 정의
+│   └── urls.py                # URL 매핑
 │
 ├── contracts/                  # 계약 관리 앱 (예정)
 ├── reports/                    # 보장 리포트 분석 앱 (예정)
@@ -27,12 +36,12 @@ crm_core/
 │
 ├── crm_core/                   # 프로젝트 설정
 │   ├── settings.py             # AWS, DB, 인증 설정 포함
-│   ├── urls.py                 # 앱별 include 구조
+│   └── urls.py                 # 앱별 include 구조
 │
-├── templates/
-│   └── base.html               # 전체 공통 레이아웃
+├── templates/                  # 전역 공통 템플릿
+│   └── base.html               # 공통 레이아웃
 │
-└── manage.py
+└── manage.py                   # Django 관리 명령어 진입점
 ```
 
 ---
