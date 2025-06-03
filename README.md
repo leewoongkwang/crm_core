@@ -31,7 +31,7 @@ crm_core/
 │
 ├── contracts/                  # 계약 관리 앱 (예정)
 ├── reports/                    # 보장 리포트 분석 앱 (예정)
-├── touchlogs/                  # 14터치 기록 앱 (예정)
+├── touchlog/                  # 14터치 기록 앱 (예정)
 ├── standard_activity/          # KPI 활동 기록 앱 (예정)
 │
 ├── crm_core/                   # 프로젝트 설정

@@ -1,0 +1,75 @@
+# activity/templates/activity/form.html
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block title %}일일 KPI 활동 기록{% endblock %}
+{% block page_title %}일일 KPI 활동 기록{% endblock %}
+
+{% block content %}
+<form method="post">
+  {% csrf_token %}
+
+  {% if messages %}
+    <div class="mb-4">
+      {% for message in messages %}
+        <p class="text-green-600 text-sm">{{ message }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <section class="bg-white p-6 rounded shadow mb-6">
+    <h2 class="text-lg font-bold mb-4">🧾 오늘의 KPI 수치</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+      <label class="flex flex-col">1분콜 수 {{ form.call_1min|add_class:"w-full border p-2 rounded" }}</label>
+      <label class="flex flex-col">2분콜 수 {{ form.call_2min|add_class:"w-full border p-2 rounded" }}</label>
+      <label class="flex flex-col">고객 제안 수 {{ form.daily_proposals|add_class:"w-full border p-2 rounded" }}</label>
+      <label class="flex flex-col">방문 제안 수 {{ form.daily_visit_proposals|add_class:"w-full border p-2 rounded" }}</label>
+      <label class="flex flex-col">카드가망 확보 수 {{ form.grade_potential|add_class:"w-full border p-2 rounded" }}</label>
+      <label class="flex flex-col">밴드 인증 수 {{ form.band_verified|add_class:"w-full border p-2 rounded" }}</label>
+    </div>
+  </section>
+
+  {% if history %}
+  <section class="bg-white p-6 rounded shadow">
+    <h2 class="text-lg font-bold mb-4">📜 활동 히스토리</h2>
+    <table class="w-full table-auto text-sm">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="py-2 px-4">날짜</th>
+          <th class="py-2 px-4">1분콜</th>
+          <th class="py-2 px-4">2분콜</th>
+          <th class="py-2 px-4">제안</th>
+          <th class="py-2 px-4">방문</th>
+          <th class="py-2 px-4">가망</th>
+          <th class="py-2 px-4">밴드</th>
+          <th class="py-2 px-4">삭제</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in history %}
+        <tr class="border-t">
+          <td class="py-2 px-4">{{ a.date|date:"Y-m-d" }}</td>
+          <td class="py-2 px-4">{{ a.call_1min }}</td>
+          <td class="py-2 px-4">{{ a.call_2min }}</td>
+          <td class="py-2 px-4">{{ a.daily_proposals }}</td>
+          <td class="py-2 px-4">{{ a.daily_visit_proposals }}</td>
+          <td class="py-2 px-4">{{ a.grade_potential }}</td>
+          <td class="py-2 px-4">{{ a.band_verified }}</td>
+          <td class="py-2 px-4">
+            <form action="{% url 'activity:delete' a.pk %}" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+              {% csrf_token %}
+              <button type="submit" class="text-red-500 text-sm">삭제</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endif %}
+
+  <div class="flex justify-end mt-4">
+    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">저장</button>
+  </div>
+</form>
+{% endblock %}

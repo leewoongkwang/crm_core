@@ -92,7 +92,11 @@ class Customer(models.Model):
             birth_date_str = f"{birth[:4]}-{birth[4:6]}-{birth[6:]}"
             return calculate_insurance_birthday(birth_date_str)
         except:
-            return None
+            return 
+            
+    def __str__(self):
+        return self.name
+
 
 class Branch(models.Model):
     name = models.CharField(max_length=64)

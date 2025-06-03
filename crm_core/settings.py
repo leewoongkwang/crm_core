@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     # 👉 CRM 앱 목록
+    'crm_core',
     'accounts',
     'home',
     'customers',
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
     'strategy',
     'activity',
     'touchlog',
+    'tasks'
 
 ]
 AUTH_USER_MODEL = 'accounts.User'

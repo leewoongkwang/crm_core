@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block title %}영업방향 전략 수립{% endblock %}
+{% block page_title %}영업방향 전략 수립{% endblock %}
+
+{% block content %}
+<form method="post">
+  {% csrf_token %}
+
+  {% if messages %}
+    <div class="mb-4">
+      {% for message in messages %}
+        <p class="text-green-600 text-sm">{{ message }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- 🎯 전략 목표 수치 -->
+  <section class="bg-white p-6 rounded shadow mb-6">
+    <h2 class="text-lg font-bold mb-4">🎯 전략 목표 수치</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+      <label class="flex flex-col">월 계약 목표 {{ form.monthly_cpc_goal|add_class:"w-full border p-2 rounded" }}</label>
+      <label class="flex flex-col">주간 계약 목표 {{ form.weekly_cpc_goal|add_class:"w-full border p-2 rounded" }}</label>
+      <label class="flex flex-col">일일 1분콜 목표 {{ form.daily_call_1min|add_class:"w-full border p-2 rounded" }}</label>
+      <label class="flex flex-col">일일 2분콜 목표 {{ form.daily_call_2min|add_class:"w-full border p-2 rounded" }}</label>
+      <label class="flex flex-col">주간 1분콜 목표 {{ form.weekly_call_1min|add_class:"w-full border p-2 rounded" }}</label>
+      <label class="flex flex-col">주간 2분콜 목표 {{ form.weekly_call_2min|add_class:"w-full border p-2 rounded" }}</label>
+      <label class="flex flex-col">제안 수 {{ form.daily_proposals|add_class:"w-full border p-2 rounded" }}</label>
+      <label class="flex flex-col">방문 제안 수 {{ form.daily_visit_proposals|add_class:"w-full border p-2 rounded" }}</label>
+      <label class="flex flex-col">밴드 인증 수 {{ form.daily_band_verified|add_class:"w-full border p-2 rounded" }}</label>
+      <label class="flex flex-col">카드가망 확보 {{ form.daily_grade_potential|add_class:"w-full border p-2 rounded" }}</label>
+    </div>
+  </section>
+
+  <!-- 🧠 전략 메모 -->
+  <section class="bg-white p-6 rounded shadow mb-6">
+    <h2 class="text-lg font-bold mb-2">🧠 전략 메모</h2>
+    {{ form.memo|add_class:"w-full border p-2 rounded" }}
+    <button type="submit" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">저장</button>
+  </section>
+</form>
+
+<!-- 📜 전략 히스토리 -->
+<section class="bg-white p-6 rounded shadow">
+  <h2 class="text-lg font-bold mb-4">📜 전략 히스토리</h2>
+  <table class="w-full table-auto text-sm">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="py-2 px-4">연도</th>
+        <th class="py-2 px-4">월</th>
+        <th class="py-2 px-4">계약 목표</th>
+        <th class="py-2 px-4">입력일</th>
+        <th class="py-2 px-4">메모</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if history %}
+        {% for s in history %}
+        <tr class="border-t">
+          <td class="py-2 px-4">{{ s.year }}</td>
+          <td class="py-2 px-4">{{ s.month }}</td>
+          <td class="py-2 px-4">{{ s.monthly_cpc_goal }}건</td>
+          <td class="py-2 px-4">{{ s.created_at|date:"Y-m-d" }}</td>
+          <td class="py-2 px-4">{{ s.memo|default:"-" }}</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr class="border-t">
+          <td colspan="5" class="py-4 text-center text-gray-500">아직 등록된 과거 전략이 없습니다.</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

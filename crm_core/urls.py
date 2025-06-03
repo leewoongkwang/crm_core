@@ -11,6 +11,7 @@ urlpatterns = [
     path("reports/", include("reports.urls")),
     path("analysis/", include("analysis.urls")),
     path("contracts/", include("contracts.urls")),
-
+    path('activity/', include('activity.urls')),
+    path('tasks/', include('tasks.urls')),
 
 ]
