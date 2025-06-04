@@ -1,105 +1,140 @@
 {% extends "base.html" %}
 {% load form_tags %}
+{% load custom_filters %}
 
 {% block title %}하루 업무 기록{% endblock %}
 {% block page_title %}하루 업무 기록 (KPI + 고객 접촉){% endblock %}
 
 {% block content %}
 
-<!-- ✅ KPI 저장 폼 (form 태그 1) -->
-<form method="post">
-  {% csrf_token %}
-  {% if messages %}
+<!-- ✅ KPI 2열 구성: 좌측 일일 진행률 + 우측 주간 진행률 -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+  <!-- 좌측: 일일 KPI 진행률 + 업다운 -->
+  <section class="bg-white p-6 rounded shadow">
+    <h2 class="text-lg font-bold mb-4">📊 오늘 KPI 진행률</h2>
+    {% for card in progress_cards %}
     <div class="mb-4">
-      {% for message in messages %}
-        <p class="text-green-600 text-sm">{{ message }}</p>
-      {% endfor %}
-    </div>
-  {% endif %}
-
-  <!-- 📊 KPI 진행률 + 🎯 KPI 수치 입력 2열 병렬 -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-    <!-- 좌측: KPI 진행률 -->
-    {% if progress_cards %}
-    <section class="bg-white p-6 rounded shadow">
-      <h2 class="text-lg font-bold mb-4">📊 KPI 진행률</h2>
-      <div class="space-y-4 text-sm">
-        {% for card in progress_cards %}
-        <div>
-          <div class="flex justify-between mb-1">
-            <span>{{ card.label }} ({{ card.value }}/{{ card.target }})</span>
-            <span>{{ card.percent }}%</span>
-          </div>
-          <div class="w-full bg-gray-200 rounded h-3">
-            <div class="{{ card.css }} h-3 rounded" style="width: {{ card.percent }}%"></div>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-    </section>
-    {% endif %}
-
-    <!-- 우측: KPI 수치 입력 -->
-    <section class="bg-white p-6 rounded shadow">
-      <h2 class="text-lg font-bold mb-4">🎯 KPI 수치 입력</h2>
-      <div class="space-y-4 text-sm">
-        <div class="grid grid-cols-1 gap-4">
-          <label class="flex flex-col">
-            <span>1분콜</span>
-            {{ kpi_form.daily_call_1min|add_class:"w-full border p-2 rounded" }}
-            {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_call_1min }}</span>{% endif %}
-          </label>
-          <label class="flex flex-col">
-            <span>2분콜</span>
-            {{ kpi_form.daily_call_2min|add_class:"w-full border p-2 rounded" }}
-            {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_call_2min }}</span>{% endif %}
-          </label>
-          <label class="flex flex-col">
-            <span>고객 제안</span>
-            {{ kpi_form.daily_proposals|add_class:"w-full border p-2 rounded" }}
-            {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_proposals }}</span>{% endif %}
-          </label>
-          <label class="flex flex-col">
-            <span>방문 제안</span>
-            {{ kpi_form.daily_visit_proposals|add_class:"w-full border p-2 rounded" }}
-            {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_visit_proposals }}</span>{% endif %}
-          </label>
-          <label class="flex flex-col">
-            <span>가망 확보</span>
-            {{ kpi_form.daily_grade_potential|add_class:"w-full border p-2 rounded" }}
-            {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_grade_potential }}</span>{% endif %}
-          </label>
-          <label class="flex flex-col">
-            <span>밴드 인증</span>
-            {{ kpi_form.daily_band_verified|add_class:"w-full border p-2 rounded" }}
-            {% if strategy %}<span class="text-xs text-gray-500 mt-1">목표: {{ strategy.daily_band_verified }}</span>{% endif %}
-          </label>
+      <div class="flex justify-between items-center mb-1">
+        <span>{{ card.label }} ({{ card.value }}/{{ card.target }})</span>
+        <div class="flex items-center gap-1">
+          <form method="post" action="{% url 'tasks:adjust_kpi' %}">
+            {% csrf_token %}
+            <input type="hidden" name="field" value="{{ card.field }}">
+            <input type="hidden" name="adjustment" value="up">
+            <button type="submit" class="text-xs px-1 bg-gray-200 rounded">&#9650;</button>
+          </form>
+          <form method="post" action="{% url 'tasks:adjust_kpi' %}">
+            {% csrf_token %}
+            <input type="hidden" name="field" value="{{ card.field }}">
+            <input type="hidden" name="adjustment" value="down">
+            <button type="submit" class="text-xs px-1 bg-gray-200 rounded">&#9660;</button>
+          </form>
         </div>
       </div>
-      <div class="flex justify-end mt-6">
-        <button type="submit" name="save_kpi" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">KPI 저장</button>
+      <div class="w-full bg-gray-200 rounded h-3">
+        <div class="{{ card.css }} h-3 rounded" style="width: {{ card.percent|floatformat:0|default:0 }}%; max-width: 100%"></div>
       </div>
-    </section>
-  </div>
-</form>
-
-<!-- ✅ 고객 접촉 기록 폼 (form 태그 2) -->
-<form method="post">
-  {% csrf_token %}
-  <section class="bg-white p-6 rounded shadow mb-6">
-    <h2 class="text-lg font-bold mb-4">🤝 고객 접촉 기록</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-      <label class="flex flex-col">고객명 {{ touch_form.customer|add_class:"w-full border p-2 rounded" }}</label>
-      <label class="flex flex-col">방식 {{ touch_form.method|add_class:"w-full border p-2 rounded" }}</label>
-      <label class="flex flex-col col-span-2">메모 {{ touch_form.memo|add_class:"w-full border p-2 rounded" }}</label>
     </div>
-    <div class="flex justify-end mt-4">
-      <button type="submit" name="save_touch" class="px-4 py-2 bg-green-600 text-white rounded">접촉 기록 저장</button>
-    </div>
+    {% endfor %}
   </section>
-</form>
 
-<!-- 🗂 KPI 히스토리 -->
+  <!-- 우측: 주간 KPI 진행률 (읽기 전용) -->
+  <section class="bg-white p-6 rounded shadow">
+    <h2 class="text-lg font-bold mb-4">📈 주간 KPI 진행률</h2>
+    {% for card in weekly_progress_cards %}
+    <div class="mb-4">
+      <div class="flex justify-between mb-1">
+        <span>{{ card.label }} ({{ card.value }}/{{ card.target }})</span>
+        <span>{{ card.percent }}%</span>
+      </div>
+      <div class="w-full bg-gray-200 rounded h-3">
+        <div class="{{ card.css }} h-3 rounded" style="width: {{ card.percent|floatformat:0|default:0 }}%; max-width: 100%"></div>
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+
+</div>
+
+<!-- 🧑 고객 터치 리스트 -->
+<section class="bg-white p-6 rounded shadow mb-6">
+  <h2 class="text-lg font-bold mb-4">📌 오늘의 고객 접촉</h2>
+  <table class="w-full table-auto text-sm">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="py-2 px-4 text-left">이름</th>
+        <th class="py-2 px-4 text-left">단계 진행</th>
+        <th class="py-2 px-4 text-left">액션</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in touch_tasks %}
+      <tr class="border-t">
+        <td class="py-2 px-4 font-medium">{{ c.name }}</td>
+        <!-- 단계 시각화 -->
+        <td class="py-2 px-4">
+          <div class="flex items-center">
+            {% for step_key, step_label in step_sequence %}
+              <div class="flex flex-col items-center w-12 text-[11px] text-center relative">
+                <!-- ● 원형 -->
+                <div class="w-3 h-3 rounded-full mb-1 z-10
+                  {% if step_key == c.current_touch_step %}
+                    border-2 border-blue-700 bg-white
+                  {% elif step_key in completed_steps_map.c.id %}
+                    bg-blue-500
+                  {% else %}
+                    bg-gray-300
+                  {% endif %}
+                "></div>
+              
+                <!-- 라벨 -->
+                <div class="truncate text-gray-600">{{ step_label }}</div>
+              </div>
+            
+              {% if not forloop.last %}
+              <!-- 선 연결 -->
+              <div class="h-0.5 w-4 
+                {% if step_key in completed_steps_map.c.id %}
+                  bg-blue-500
+                {% else %}
+                  bg-gray-300
+                {% endif %}">
+              </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </td>
+        
+        <!-- 액션 -->
+        <td class="py-2 px-4">
+          <form method="post" action="{% url 'tasks:advance_touch' %}" class="inline">
+            {% csrf_token %}
+            <input type="hidden" name="customer_id" value="{{ c.id }}">
+            <button class="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">진행</button>
+          </form>
+
+          <form method="post" action="{% url 'tasks:revert_touch' %}" class="inline ml-2">
+            {% csrf_token %}
+            <input type="hidden" name="customer_id" value="{{ c.id }}">
+            <button class="px-2 py-1 bg-gray-400 text-white text-xs rounded hover:bg-gray-600">되돌리기</button>
+          </form>
+
+          <form method="post" action="{% url 'tasks:complete_touch' %}" class="inline ml-2">
+            {% csrf_token %}
+            <input type="hidden" name="customer_id" value="{{ c.id }}">
+            <button class="px-2 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700">완료</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+
+
+<!-- ✅ KPI 히스토리 -->
 {% if kpi_history %}
 <section class="bg-white p-6 rounded shadow mb-6">
   <h2 class="text-lg font-bold mb-4">🗂 KPI 히스토리</h2>
@@ -132,7 +167,7 @@
 </section>
 {% endif %}
 
-<!-- 📋 고객 접촉 히스토리 -->
+<!-- ✅ 고객 접촉 히스토리 -->
 {% if touch_history %}
 <section class="bg-white p-6 rounded shadow">
   <h2 class="text-lg font-bold mb-4">📋 고객 접촉 히스토리</h2>

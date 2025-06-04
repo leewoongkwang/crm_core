@@ -57,13 +57,21 @@ class Customer(models.Model):
     is_target_customer = models.BooleanField(default=False)
     is_active_touching = models.BooleanField(default=False)
 
-    sent_business_card = models.BooleanField(default=False)
-    sent_report = models.BooleanField(default=False)
-    sent_pre_call_sms = models.BooleanField(default=False)
-    first_call_done = models.BooleanField(default=False)
-    sent_proposal_on_reject = models.BooleanField(default=False)
-    second_call_done = models.BooleanField(default=False)
-    suggested_visit = models.BooleanField(default=False)
+    TOUCH_STEP_CHOICES = [
+        ("report", "리포트 발송"),
+        ("pre_sms", "콜 전 문자"),
+        ("call1", "1차 콜"),
+        ("reject_sms", "거절 후 제안"),
+        ("call2", "2차 콜"),
+        ("visit", "방문 제안"),
+        ("done", "완료"),
+    ]
+    current_touch_step = models.CharField(
+        max_length=20,
+        choices=TOUCH_STEP_CHOICES,
+        default="report",
+        help_text="현재 고객의 접촉 단계"
+    )
 
     memo = models.TextField(blank=True)
 
