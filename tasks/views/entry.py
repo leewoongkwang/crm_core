@@ -44,6 +44,11 @@ def task_entry_view(request):
     weekly_progress_cards = get_weekly_kpi_progress(request.user)
     touch_tasks = get_touch_task_list(request.user)
 
+    
+    active = request.GET.get("active")
+    step = request.GET.get("step")
+    touch_tasks = get_touch_task_list(request.user, active=active, step=step)
+
     # 터치 단계 시퀀스 (순서 보장)
     step_sequence = [
         ("report", "리포트"),
@@ -62,6 +67,7 @@ def task_entry_view(request):
         'progress_cards': progress_cards,
         'weekly_progress_cards': weekly_progress_cards,  
         'touch_tasks': touch_tasks,
+        'step_choices': TOUCH_NEXT_MAP,
         'next_step_map': TOUCH_NEXT_MAP,
         'step_sequence': step_sequence,
         'completed_steps_map': {
@@ -165,8 +171,12 @@ TOUCH_NEXT_MAP = {
     "done": "완료",
 }
 
-def get_touch_task_list(user):
-    return Customer.objects.filter(
-        user=user,
-        is_active_touching=True
-    ).exclude(current_touch_step="done")
+def get_touch_task_list(user, active=None, step=None):
+    qs = Customer.objects.filter(user=user)
+    if active == "1":
+        qs = qs.filter(is_active_touching=True)
+    elif active == "0":
+        qs = qs.filter(is_active_touching=False)
+    if step:
+        qs = qs.filter(current_touch_step=step)
+    return qs

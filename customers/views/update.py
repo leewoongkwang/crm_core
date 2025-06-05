@@ -4,6 +4,7 @@ from customers.models import Customer
 from customers.forms import CustomerForm
 
 
+
 @login_required
 def customer_edit_view(request, id):
     customer = get_object_or_404(Customer, id=id, user=request.user)

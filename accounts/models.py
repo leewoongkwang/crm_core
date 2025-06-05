@@ -13,8 +13,8 @@ class Branch(models.Model):
 class User(AbstractUser):
     USER_TYPE_CHOICES = (
         ('planner', '설계사'),
-        ('manager', '지점장'),
-        ('branch', '본사'),
+        ('manager', '관리자'),
+        ('branch', '운영자'),
     )
 
     email = models.EmailField(max_length=64, unique=True)

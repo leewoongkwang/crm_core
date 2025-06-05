@@ -3,7 +3,7 @@
 {% load custom_filters %}
 
 {% block title %}하루 업무 기록{% endblock %}
-{% block page_title %}하루 업무 기록 (KPI + 고객 접촉){% endblock %}
+{% block page_title %}해야할 일 (표준활동 + 고객 터치){% endblock %}
 
 {% block content %}
 
@@ -12,7 +12,7 @@
 
   <!-- 좌측: 일일 KPI 진행률 + 업다운 -->
   <section class="bg-white p-6 rounded shadow">
-    <h2 class="text-lg font-bold mb-4">📊 오늘 KPI 진행률</h2>
+    <h2 class="text-lg font-bold mb-4">📊 일일 표준활동 진행률</h2>
     {% for card in progress_cards %}
     <div class="mb-4">
       <div class="flex justify-between items-center mb-1">
@@ -41,7 +41,7 @@
 
   <!-- 우측: 주간 KPI 진행률 (읽기 전용) -->
   <section class="bg-white p-6 rounded shadow">
-    <h2 class="text-lg font-bold mb-4">📈 주간 KPI 진행률</h2>
+    <h2 class="text-lg font-bold mb-4">📈 주간 표준활동 진행률</h2>
     {% for card in weekly_progress_cards %}
     <div class="mb-4">
       <div class="flex justify-between mb-1">
@@ -59,13 +59,38 @@
 
 <!-- 🧑 고객 터치 리스트 -->
 <section class="bg-white p-6 rounded shadow mb-6">
-  <h2 class="text-lg font-bold mb-4">📌 오늘의 고객 접촉</h2>
+<!-- ✅ 고객 리스트 필터 -->
+  <form method="get" class="mb-4 flex gap-4 items-end">
+    <label class="text-sm">
+      접촉 상태:
+      <select name="active" class="border p-1 rounded">
+        <option value="">전체</option>
+        <option value="1" {% if request.GET.active == '1' %}selected{% endif %}>진행 중</option>
+        <option value="0" {% if request.GET.active == '0' %}selected{% endif %}>종료됨</option>
+      </select>
+    </label>
+  
+    <label class="text-sm">
+      단계:
+      <select name="step" class="border p-1 rounded">
+        <option value="">전체</option>
+        {% for code, label in step_choices.items %}
+          <option value="{{ code }}" {% if request.GET.step == code %}selected{% endif %}>
+            {{ label }}
+          </option>
+        {% endfor %}
+      </select>
+    </label>
+  
+    <button type="submit" class="px-3 py-1 bg-blue-500 text-white text-sm rounded">필터</button>
+  </form>
+  <h2 class="text-lg font-bold mb-4">📌 고객 터치 진행 상황</h2>
   <table class="w-full table-auto text-sm">
     <thead class="bg-gray-100">
       <tr>
         <th class="py-2 px-4 text-left">이름</th>
         <th class="py-2 px-4 text-left">단계 진행</th>
-        <th class="py-2 px-4 text-left">액션</th>
+        <th class="py-2 px-4 text-left">행동</th>
       </tr>
     </thead>
     <tbody>
