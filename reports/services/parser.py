@@ -1,6 +1,8 @@
 # reports/services/parser.py
 
-import fitz  # PyMuPDF
+import fitz  # 
+import warnings
+warnings.filterwarnings("ignore", message="CropBox missing from /Page")
 import pdfplumber
 import re
 import logging
@@ -17,7 +19,7 @@ def pdf_to_json(pdf_path: str) -> Dict[str, Any]:
     # 1. 고객 정보 추출
     # ------------------------
     try:
-        with fitz.open(pdf_path) as doc:
+        with fitz.open(stream=pdf_path, filetype="pdf") as doc:
             text2 = doc.load_page(1).get_text().strip()
         lines = [line.strip() for line in text2.splitlines() if line.strip()]
 
@@ -61,7 +63,7 @@ def pdf_to_json(pdf_path: str) -> Dict[str, Any]:
     # 2. 보장 항목 추출
     # ------------------------
     try:
-        with fitz.open(pdf_path) as doc:
+        with fitz.open(stream=pdf_path, filetype="pdf") as doc:
             pages = [i for i in range(doc.page_count)
                      if '전체 보장현황' in doc.load_page(i).get_text()]
 
@@ -91,7 +93,7 @@ def pdf_to_json(pdf_path: str) -> Dict[str, Any]:
     # 3. 보험상품 요약 추출
     # ------------------------
     try:
-        with fitz.open(pdf_path) as doc:
+        with fitz.open(stream=pdf_path, filetype="pdf") as doc:
             pages = [i for i in range(doc.page_count)
                      if '가입보험 전체현황' in doc.load_page(i).get_text()]
 

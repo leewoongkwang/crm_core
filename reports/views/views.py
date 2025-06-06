@@ -3,32 +3,33 @@ from reports.forms import ReportUploadForm
 from reports.models import Report
 from reports.services.parser import pdf_to_json
 from utils.s3 import upload_pdf_to_s3
-
+from io import BytesIO
 
 def report_upload_view(request):
     if request.method == 'POST':
         form = ReportUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            report = form.save(commit=False)
-            report.user = request.user
+            uploaded_file = form.cleaned_data['pdf_file']
 
-            uploaded_file = request.FILES['pdf_file']
+            # ✅ PDF 내용을 메모리에 안전하게 복사
+            original_bytes = uploaded_file.read()
+            memory_file_for_s3 = BytesIO(original_bytes)
+            memory_file_for_parser = BytesIO(original_bytes)
 
-            # 1. S3 업로드
-            s3_url = upload_pdf_to_s3(uploaded_file, request.user.id)
-            report.file_url = s3_url
+            # ✅ S3 업로드
+            s3_url = upload_pdf_to_s3(memory_file_for_s3, request.user.id)
 
-            # 2. PDF 파싱 (tempfile로 로컬 임시 저장)
-            uploaded_file.seek(0)
-            with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
-                for chunk in uploaded_file.chunks():
-                    tmp.write(chunk)
-                tmp_path = tmp.name
+            # ✅ 파싱
+            parsed_data = pdf_to_json(memory_file_for_parser)
 
-            report.parse_json = pdf_to_json(tmp_path)
-            report.save()
-
-            return redirect('analysis:report_detail', report_id=report.id)  # 분석 페이지 연결
+            # ✅ 저장
+            Report.objects.create(
+                customer=form.cleaned_data['customer'],
+                user=request.user,
+                file_url=s3_url,
+                parse_json=parsed_data
+            )
+            return redirect('report_upload')
     else:
         form = ReportUploadForm()
     return render(request, 'reports/upload.html', {'form': form})
