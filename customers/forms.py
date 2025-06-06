@@ -7,7 +7,7 @@ class CustomerForm(forms.ModelForm):
         fields = [
             "name", "phone_encrypted", "birth_encrypted", "gender",
             "attribute", "grade", "propensity", "intimacy", "priority",
-            "is_target_customer", "is_active_touching", "memo"
+            "is_target_customer", "is_active_touching","has_report", "memo"
         ]
         widgets = {
             "name": forms.TextInput(attrs={"class": "w-full p-2 border rounded"}),
@@ -24,6 +24,7 @@ class CustomerForm(forms.ModelForm):
             "priority": forms.Select(attrs={"class": "w-full p-2 border rounded"}),
             "is_target_customer": forms.CheckboxInput(attrs={"class": "h-5 w-5"}),
             "is_active_touching": forms.CheckboxInput(attrs={"class": "h-5 w-5"}),
+            "has_report": forms.CheckboxInput(attrs={"class": "h-5 w-5"}),
             "memo": forms.Textarea(attrs={"class": "w-full p-2 border rounded", "rows": 4}),
         }
         labels = {
@@ -38,6 +39,7 @@ class CustomerForm(forms.ModelForm):
             "priority": "우선 순위",
             "is_target_customer": "타겟 고객 여부",
             "is_active_touching": "터치 진행 여부",
+            "has_report": "레포트 등록 여부",
             "memo": "메모",
         }
 

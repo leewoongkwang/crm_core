@@ -41,6 +41,7 @@
         <th class="py-2 px-3">라포</th>
         <th class="py-2 px-3">타겟</th>
         <th class="py-2 px-3">터치</th>
+        <th class="py-2 px-3">레포트</th>
         <th class="py-2 px-3"><a href="?sort=-created_at">등록일</a></th>
         <th class="py-2 px-3">메모</th>
         <th class="py-2 px-3">관리</th>
@@ -59,6 +60,7 @@
         <td class="py-2 px-3">{{ customer.intimacy }}</td>
         <td class="py-2 px-3">{% if customer.is_target_customer %}✅{% else %}❌{% endif %}</td>
         <td class="py-2 px-3">{% if customer.is_active_touching %}🟢{% else %}⚪{% endif %}</td>
+        <td class="py-2 px-3">{% if customer.has_report %}✅{% else %}❌{% endif %}</td>
         <td class="py-2 px-3">{{ customer.created_at|date:"Y-m-d" }}</td>
         <td class="py-2 px-3 truncate max-w-xs">{{ customer.memo|truncatechars:20 }}</td>
         <td class="py-2 px-3 space-x-2">

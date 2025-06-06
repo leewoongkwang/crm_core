@@ -20,6 +20,7 @@ def customer_list_view(request):
     propensity = request.GET.get("propensity")
     priority = request.GET.get("priority")
     target = request.GET.get("is_target_customer")
+    report = request.GET.get("has_report")
 
     if grade:
         customers = customers.filter(grade=grade)
@@ -33,6 +34,10 @@ def customer_list_view(request):
         customers = customers.filter(is_target_customer=True)
     elif target == "0":
         customers = customers.filter(is_target_customer=False)
+    if report == "1":
+        customers = customers.filter(has_report=True)
+    elif report == "0":
+        customers = customers.filter(has_report=False)
 
     # 정렬
     sort = request.GET.get("sort", "-created_at")

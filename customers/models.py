@@ -53,7 +53,8 @@ class Customer(models.Model):
     propensity = models.CharField(max_length=16, choices=PROPENSITY_CHOICES, blank=True)
     intimacy = models.CharField(max_length=16, choices=INTIMACY_CHOICES, blank=True)
     priority = models.CharField(max_length=16, choices=PRIORITY_CHOICES, blank=True)
-
+    
+    has_report = models.BooleanField(default=False, help_text="리포트 등록 여부")
     is_target_customer = models.BooleanField(default=False)
     is_active_touching = models.BooleanField(default=False)
 

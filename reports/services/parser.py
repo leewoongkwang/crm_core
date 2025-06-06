@@ -79,9 +79,13 @@ def pdf_to_json(pdf_path: str) -> Dict[str, Any]:
                             cov_name = row[col_idx['담보명']]
                             cov_amt = row[col_idx['가입금액']]
                             if cov_name and cov_amt:
+                                amt = cov_amt.strip()
+                                if re.fullmatch(r"\d{1,3}(,\d{3})*", amt.replace(" ", "")):
+                                    amt += "만원"
+                                    print(amt)
                                 coverage.append({
                                     'coverage_name': cov_name.strip(),
-                                    'coverage_amount': cov_amt.strip()
+                                    'coverage_amount': amt
                                 })
                         break
 
