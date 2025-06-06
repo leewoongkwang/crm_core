@@ -135,3 +135,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AWS_STORAGE_BUCKET_NAME = 'nhcrm-user-files'
+AWS_S3_REGION_NAME = 'ap-southeast-2'
+AWS_S3_BASE_URL = 'https://nhcrm-user-files.s3.ap-southeast-2.amazonaws.com'

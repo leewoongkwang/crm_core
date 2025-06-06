@@ -1,8 +1,7 @@
+# reports/urls.py
 from django.urls import path
-from reports.views.customer_tab import customer_report_partial
-
-app_name = "reports"
+from reports.views.views import report_upload_view
 
 urlpatterns = [
-    path("customer/<int:pk>/partial/", customer_report_partial, name="report_tab_customer"),
+    path('upload/', report_upload_view, name='report_upload'),
 ]

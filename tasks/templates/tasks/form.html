@@ -13,7 +13,7 @@
   <!-- 좌측: 일일 KPI 진행률 + 업다운 -->
   <section class="bg-white p-6 rounded shadow">
     <h2 class="text-lg font-bold mb-4">📊 일일 표준활동 진행률</h2>
-    {% for card in progress_cards %}
+    {% for card in daily_progress_cards %}
     <div class="mb-4">
       <div class="flex justify-between items-center mb-1">
         <span>{{ card.label }} ({{ card.value }}/{{ card.target }})</span>

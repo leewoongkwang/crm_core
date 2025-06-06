@@ -7,25 +7,19 @@ from django.views.decorators.http import require_POST
 from activity.models import DailyStandardActivity
 from customers.models import Customer
 from touchlog.models import TouchLog
+from tasks.constants import STEP_SEQUENCE, DAILY_KPI_FIELDS
 
 @require_POST
 @login_required
 def adjust_kpi_view(request):
     field = request.POST.get("field")
     direction = request.POST.get("adjustment")
-
-    print("field:", field)
     today = timezone.now().date()
 
     kpi, _ = DailyStandardActivity.objects.get_or_create(user=request.user, date=today)
+    allowed_fields = [f for _, f in DAILY_KPI_FIELDS]
 
-    ALLOWED_FIELDS = [
-        "daily_call_1min", "daily_call_2min", "daily_proposals",
-        "daily_visit_proposals", "daily_grade_potential", "daily_band_verified"
-    ]
-
-    print(f"🛠 field={field}, dir={direction}, user={request.user.username}")
-    if field in ALLOWED_FIELDS:
+    if field in allowed_fields:
         current = getattr(kpi, field, 0)
         if direction == "up":
             setattr(kpi, field, current + 1)
@@ -33,11 +27,7 @@ def adjust_kpi_view(request):
             setattr(kpi, field, current - 1)
         kpi.save()
 
-
     return redirect("tasks:entry")
-
-    
-TOUCH_STEP_SEQUENCE = ["report", "pre_sms", "call1", "reject_sms", "call2", "visit", "done"]
 
 @require_POST
 @login_required
@@ -49,13 +39,12 @@ def advance_touch_action_view(request):
         return redirect("tasks:entry")
 
     try:
-        index = TOUCH_STEP_SEQUENCE.index(customer.current_touch_step)
-        next_step = TOUCH_STEP_SEQUENCE[index + 1] if index + 1 < len(TOUCH_STEP_SEQUENCE) else "done"
+        index = STEP_SEQUENCE.index((customer.current_touch_step, dict(STEP_SEQUENCE)[customer.current_touch_step]))
+        next_step = STEP_SEQUENCE[index + 1][0] if index + 1 < len(STEP_SEQUENCE) else "done"
     except ValueError:
         next_step = "done"
 
     customer.current_touch_step = next_step
-    # 자동 비활성화 삭제: is_active_touching 건드리지 않음
     customer.save()
 
     TouchLog.objects.create(
@@ -68,7 +57,6 @@ def advance_touch_action_view(request):
 
     return redirect("tasks:entry")
 
-
 @require_POST
 @login_required
 def revert_touch_action_view(request):
@@ -79,13 +67,13 @@ def revert_touch_action_view(request):
         return redirect("tasks:entry")
 
     try:
-        index = TOUCH_STEP_SEQUENCE.index(customer.current_touch_step)
-        prev_step = TOUCH_STEP_SEQUENCE[index - 1] if index > 0 else "report"
+        index = STEP_SEQUENCE.index((customer.current_touch_step, dict(STEP_SEQUENCE)[customer.current_touch_step]))
+        prev_step = STEP_SEQUENCE[index - 1][0] if index > 0 else "report"
     except ValueError:
         prev_step = "report"
 
     customer.current_touch_step = prev_step
-    customer.is_active_touching = True  # 강제 활성화
+    customer.is_active_touching = True
     customer.save()
 
     TouchLog.objects.create(
@@ -98,7 +86,6 @@ def revert_touch_action_view(request):
 
     return redirect("tasks:entry")
 
-
 @require_POST
 @login_required
 def complete_touch_action_view(request):
@@ -108,7 +95,6 @@ def complete_touch_action_view(request):
     except Customer.DoesNotExist:
         return redirect("tasks:entry")
 
-    # 수동 완료 처리: is_active_touching = False
     customer.is_active_touching = False
     customer.save()
 
