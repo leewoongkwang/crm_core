@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}메시지 전송 테스트{% endblock %}
+{% block page_title %}카카오톡 메시지 전송 요청{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto bg-white p-6 rounded shadow">
+
+  <!-- ✅ 전송 프로그램 설치 안내 (기본 숨김) -->
+  <div id="install-guide" class="hidden bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-6">
+    <h3 class="font-bold text-yellow-800 mb-1">🔧 전송 프로그램 설치 필요</h3>
+    <p class="text-sm text-yellow-700">
+      전송 프로그램이 설치되지 않은 경우 아래 버튼을 클릭하여 설치를 진행하세요.<br>
+      설치 후 프로그램은 자동으로 종료되며, 브라우저를 새로고침하면 바로 사용 가능합니다.
+    </p>
+    <a href="http://3.38.7.3:8000/static/download/setup_kakao_launcher.bat" download
+       onclick="alert('📥 설치 프로그램이 다운로드됩니다.\\n압축 없이 바로 실행해주세요.')"
+       class="inline-block bg-blue-600 text-white font-semibold px-4 py-2 rounded hover:bg-blue-700 mt-2">
+      🚀 전송 프로그램 설치하기
+    </a>
+    <p class="text-xs text-gray-500 mt-2">
+      ⚠ 본 설치파일은 메시지 자동 전송을 위한 프로그램입니다. 컴퓨터에 영향을 주지 않으며, 언제든 삭제 가능합니다.
+    </p>
+  </div>
+
+  {% if messages %}
+    <ul class="mb-4">
+      {% for message in messages %}
+        <li class="text-green-600">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <form method="POST" action="{% url 'message:send' %}" class="grid grid-cols-3 gap-6">
+    {% csrf_token %}
+    <input type="hidden" name="user_id" value="{{ request.user.id }}">
+    <input type="hidden" name="host" value="3.38.7.3:8000">  <!-- 실제 host 값 -->
+    <!-- 좌측: 고객 리스트 -->
+    <div class="col-span-1 border rounded p-4 overflow-y-scroll h-[500px]">
+      <h3 class="font-bold text-lg mb-2">전송 대상 고객</h3>
+      {% for customer in customers %}
+        <label class="flex items-center space-x-2 mb-1">
+          <input type="checkbox" name="recipients" value="{{ customer.id }}">
+          <span>{{ customer.name }} / {{ customer.gender }} / {{ customer.grade }}</span>
+        </label>
+      {% empty %}
+        <p class="text-sm text-gray-400">표시할 고객 없음</p>
+      {% endfor %}
+    </div>
+
+    <!-- 우측: 메시지 입력 -->
+    <div class="col-span-2 space-y-4">
+
+      <div>
+        <label class="block text-sm font-bold mb-1">메시지 내용 ({{ 이름 }} 사용 가능)</label>
+        <textarea name="message" class="w-full border px-3 py-2 rounded" rows="5" required>{{ request.POST.message|default_if_none:''|escape }}</textarea>
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold mb-1">이미지 URL (선택)</label>
+        <input type="text" name="image_url" class="w-full border px-3 py-2 rounded" value="{{ request.POST.image_url|default_if_none:''|escape }}">
+      </div>
+
+      <!-- 설치 상태 확인 + 전송 버튼 -->
+      <div class="space-y-2">
+        <button type="button" onclick="checkInstallStatus()" class="bg-yellow-500 text-white px-3 py-1 rounded">
+          🔍 설치 상태 확인
+        </button>
+        <p id="sender-status-msg" class="text-sm text-gray-600"></p>
+
+        <button
+          type="button"
+          id="send-btn"
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          onclick="handleSendClick()"
+        >
+          전송 요청
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+function checkInstallStatus() {
+  window.location.href = "NHCRM://check-install";
+
+  setTimeout(() => {
+    fetch("{% url 'message:launcher_ping_latest' %}")
+      .then(res => res.json())
+      .then(data => {
+        const sendBtn = document.getElementById("send-btn");
+        const guide = document.getElementById("install-guide");
+        const msgEl = document.getElementById("sender-status-msg");
+
+        if (data.installed === "yes") {
+          guide.classList.add("hidden");
+          sendBtn.disabled = false;
+          msgEl.textContent = "✅ 전송 프로그램이 설치되어 있습니다.";
+          msgEl.className = "text-green-600 text-sm";
+        } else {
+          guide.classList.remove("hidden");
+          sendBtn.disabled = true;
+          msgEl.textContent = "❌ 전송 프로그램이 설치되지 않은 것으로 보입니다.";
+          msgEl.className = "text-red-500 text-sm";
+        }
+      });
+  }, 2000);
+}
+</script>
+<script>
+function handleSendClick() {
+  const sendBtn = document.getElementById("send-btn");
+  const form = sendBtn.closest("form");
+
+  // 1️⃣ 사용자 ID와 host 정보 가져오기
+  const userId = form.querySelector('input[name="user_id"]').value;
+  const host = form.querySelector('input[name="host"]').value;
+
+  // 2️⃣ launcher 실행 (커스텀 프로토콜)
+  window.location.href = `NHCRM://${userId}/${host}`;
+
+  // 3️⃣ 1.5초 후 폼 제출
+  setTimeout(() => {
+    form.submit();
+  }, 1500);
+}
+</script>
+<script>
+window.addEventListener("beforeunload", function () {
+  fetch("/message/sender-shutdown-view?user_id={{ request.user.id }}");
+});
+</script>
+{% endblock %}

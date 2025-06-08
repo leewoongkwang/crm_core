@@ -13,5 +13,6 @@ urlpatterns = [
     path("contracts/", include("contracts.urls")),
     path('activity/', include('activity.urls')),
     path('tasks/', include('tasks.urls')),
+    path("message/", include("message.urls")),
 
 ]

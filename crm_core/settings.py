@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-tz_sgg0mu1zi-pink(kf$m_4j#cie%45x+b=%qqkvrru)j@3*_
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["3.38.7.3", "localhost", "127.0.0.1"]
 
 
 
@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'strategy',
     'activity',
     'touchlog',
-    'tasks'
+    'tasks',
+    'message',
 
 ]
 AUTH_USER_MODEL = 'accounts.User'
@@ -132,6 +133,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

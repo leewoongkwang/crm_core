@@ -16,4 +16,5 @@ urlpatterns = [
     path("<int:id>/delete/", customer_delete_view, name="customer_delete"),
     path("<int:pk>/", CustomerDetailView.as_view(), name="customer_detail"),
     path("touchlog/", include("touchlog.urls")),
+    
 ]
