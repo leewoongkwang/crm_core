@@ -3,9 +3,9 @@ from django.shortcuts import render
 from message.views.send import send_message_view
 from message.views.send import sender_ping_view
 from message.views.api import sender_shutdown_view
-
 from message.views.api import lock_and_fetch_messages, report_message_status
 from message.views.api import message_status_summary
+from message.views.api import recipient_status_list
 from message.views.api import launcher_ping, launcher_ping_latest
 from customers.models import Customer
 app_name = "message"
@@ -19,4 +19,5 @@ urlpatterns = [
     path("launcher-ping", launcher_ping, name="launcher_ping"),
     path("launcher-ping-latest", launcher_ping_latest, name="launcher_ping_latest"),
     path("api/sender-shutdown", sender_shutdown_view, name="sender-shutdown"),
+    path("api/recipient-status", recipient_status_list, name="recipient_status_list"),
 ]

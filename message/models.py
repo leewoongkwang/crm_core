@@ -23,3 +23,19 @@ class MessageQueue(models.Model):
 
     def __str__(self):
         return f"{self.user.username} → {self.recipients.count()}명 ({self.status})"
+
+class RecipientStatus(models.Model):
+    message = models.ForeignKey(MessageQueue, on_delete=models.CASCADE, related_name="recipient_statuses")
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    name = models.CharField(max_length=64, blank=True, null=True)
+    status = models.CharField(max_length=16, choices=[
+        ("pending", "대기"),
+        ("sent", "성공"),
+        ("failed", "실패")
+    ], default="pending")
+    reason = models.TextField(blank=True, null=True)  # 실패 이유 or 단계 로그
+    sent_at = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.customer.name} - {self.status}"

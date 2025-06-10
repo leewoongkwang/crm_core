@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.timezone import now
-from message.models import MessageQueue
+from message.models import MessageQueue, RecipientStatus
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
@@ -66,7 +66,10 @@ def lock_and_fetch_messages(request):
         result = [
             {
                 "id": m.id,
-                "recipients": [f"{c.name}" for c in m.recipients.all()],  # ✅ 수정
+                "recipients": [
+                   {"name": c.name, "customer_id": c.id}
+                   for c in m.recipients.all()
+                ],
                 "message": m.message,
                 "image_url": m.image_url,
                 "created_at": m.created_at.isoformat()
@@ -78,30 +81,86 @@ def lock_and_fetch_messages(request):
 
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)}, status=500)
-
 @csrf_exempt
 @require_POST
 def report_message_status(request):
     try:
         data = json.loads(request.body)
         msg_id = data.get("id")
+        customer_id = data.get("customer_id")
+
         status = data.get("status")
-        reason = data.get("reason", "")
+        step_log = data.get("step_log", [])
+        reason = json.dumps(step_log, ensure_ascii=False, indent=2)
 
-        if not msg_id or status not in ["sent", "failed"]:
-            return JsonResponse({"status": "error", "message": "필드 누락 또는 잘못된 status"}, status=400)
+        print(f"[🧪 DEBUG] message_id={msg_id}, customer_id={customer_id}, status={status}")
 
-        msg = MessageQueue.objects.get(id=msg_id)
-        msg.status = status
+        if not msg_id or not customer_id or status not in ["sent", "failed"]:
+            return JsonResponse({"status": "error", "message": "필드 누락"}, status=400)
+
+        mq = get_object_or_404(MessageQueue, id=msg_id)
+        rs = RecipientStatus.objects.filter(message=mq, customer_id=customer_id).first()
+        if not rs:
+            return JsonResponse({"status": "error", "message": "RecipientStatus 없음"}, status=404)
+
+        rs.status = status
+        rs.reason = reason
         if status == "sent":
-            msg.sent_at = now()
-        elif status == "failed":
-            msg.failure_reason = reason
-        msg.save()
+            rs.sent_at = now()
+        rs.save()
 
         return JsonResponse({"status": "success"})
+
     except Exception as e:
+        import traceback
+        print(traceback.format_exc())
         return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+@require_GET
+def recipient_status_list(request):
+    user_id = request.GET.get("user_id")
+    message_id = request.GET.get("message_id")
+
+    try:
+        if not user_id:
+            return JsonResponse({"error": "user_id required"}, status=400)
+
+        from message.models import RecipientStatus
+
+        filters = {"message__user_id": user_id}
+        if message_id and message_id != "latest":
+            filters["message_id"] = message_id
+        elif message_id == "latest":
+            latest = (
+                RecipientStatus.objects
+                .filter(message__user_id=user_id)
+                .order_by("-created_at")
+                .first()
+            )
+            if latest:
+                filters["message_id"] = latest.message.id
+            else:
+                return JsonResponse([], safe=False)
+
+        statuses = (
+            RecipientStatus.objects
+            .filter(**filters)
+            .select_related("customer")
+            .order_by("created_at")
+        )
+
+        data = [{
+            "customer_id": s.customer.id,
+            "name": s.customer.name,
+            "status": s.status,
+            "reason": s.reason or ""
+        } for s in statuses]
+
+        return JsonResponse(data, safe=False)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
 
         
 @require_GET

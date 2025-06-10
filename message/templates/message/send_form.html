@@ -39,7 +39,7 @@
       <h3 class="font-bold text-lg mb-2">전송 대상 고객</h3>
       {% for customer in customers %}
         <label class="flex items-center space-x-2 mb-1">
-          <input type="checkbox" name="recipients" value="{{ customer.id }}">
+          <input type="checkbox" name="recipients" value='{"id": {{ customer.id }}, "name": "{{ customer.name }}"}'>
           <span>{{ customer.name }} / {{ customer.gender }} / {{ customer.grade }}</span>
         </label>
       {% empty %}
@@ -77,6 +77,13 @@
         </button>
       </div>
     </div>
+  <!-- ✅ 실시간 전송 상태 영역 -->
+  <div id="status-board" class="mt-10 p-4 border rounded bg-gray-50">
+    <h2 class="font-bold text-lg mb-4">📡 실시간 전송 상태</h2>
+    <div id="status-list" class="space-y-4 text-sm text-gray-800">
+      <div class="text-gray-500">⏳ 대기 중입니다...</div>
+    </div>
+  </div>
   </form>
 </div>
 
@@ -130,4 +137,52 @@ window.addEventListener("beforeunload", function () {
   fetch("/message/sender-shutdown-view?user_id={{ request.user.id }}");
 });
 </script>
+
+<script>
+const msgId = "{{ request.GET.message_id|default:'latest' }}";
+const userId = "{{ request.user.id }}";
+
+function pollRecipientStatus() {
+  fetch(`/message/api/recipient-status?user_id=${userId}&message_id=${msgId}`)
+    .then(res => res.json())
+    .then(data => {
+      const list = document.getElementById("status-list");
+      list.innerHTML = "";
+
+      if (data.length === 0) {
+        list.innerHTML = "<div class='text-gray-400'>📭 아직 상태 정보가 없습니다.</div>";
+        return;
+      }
+
+      data.forEach(rec => {
+        const color = rec.status === "sent" ? "green" : (rec.status === "failed" ? "red" : "yellow");
+        const icon = rec.status === "sent" ? "✅" : (rec.status === "failed" ? "❌" : "⏳");
+        const statusText = rec.status === "sent" ? "전송 완료" : (rec.status === "failed" ? "전송 실패" : "전송 중");
+
+        const item = document.createElement("div");
+        item.className = `border border-${color}-200 bg-white rounded p-3 shadow-sm`;
+
+        item.innerHTML = `
+          <div class="flex justify-between items-center">
+          <div class="${color} font-semibold">
+            ${icon} ${rec.name} <span class="text-xs text-gray-400">#${rec.customer_id}</span>
+          </div>
+            <span class="text-xs bg-${color}-100 text-${color}-800 px-2 py-1 rounded">${statusText}</span>
+          </div>
+          <button onclick="toggleLog('log-${rec.customer_id}')" class="text-blue-500 text-xs underline mt-1">▼ 상세 로그 보기</button>
+          <pre id="log-${rec.customer_id}" class="hidden bg-gray-50 border rounded mt-2 p-2 text-xs text-gray-700 whitespace-pre-wrap">${rec.reason}</pre>
+        `;
+        list.appendChild(item);
+      });
+    });
+}
+
+function toggleLog(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle("hidden");
+}
+
+setInterval(pollRecipientStatus, 2000);
+</script>
+
 {% endblock %}
