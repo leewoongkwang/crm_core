@@ -1,0 +1,6 @@
+requests
+pywinauto
+pyperclip
+pyautogui
+pillow
+psutil
