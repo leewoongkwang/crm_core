@@ -1,7 +1,7 @@
 # analysis/views/detail.py
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from reports.models import Report
+from report.models import Report
 
 @login_required
 def analysis_detail_view(request, report_id):

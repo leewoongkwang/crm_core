@@ -45,12 +45,12 @@ INSTALLED_APPS = [
     'accounts',
     'home',
     'customers',
-    'reports',
     'analysis',
     'contracts',
     'strategy',
     'activity',
     'touchlog',
+    'report',
     'tasks',
     'message',
 

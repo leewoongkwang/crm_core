@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from reports.forms import ReportUploadForm
-from reports.models import Report
-from reports.services.parser import pdf_to_json
+from report.forms import ReportUploadForm
+from report.models import Report
+from report.services.parser import pdf_to_json
 from utils.s3 import upload_pdf_to_s3
 from io import BytesIO
 
@@ -32,4 +32,4 @@ def report_upload_view(request):
             return redirect('report_upload')
     else:
         form = ReportUploadForm()
-    return render(request, 'reports/upload.html', {'form': form})
+    return render(request, 'report/upload.html', {'form': form})

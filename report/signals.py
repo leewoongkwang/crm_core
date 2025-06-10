@@ -1,8 +1,8 @@
-# reports/signals.py
+# report/signals.py
 
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from reports.models import Report
+from report.models import Report
 from customers.models import Customer
 
 @receiver(post_save, sender=Report)

@@ -1,10 +1,10 @@
 from django.apps import AppConfig
 
 
-class ReportsConfig(AppConfig):
+class ReportConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'reports'
+    name = 'report'
 
 
 def ready(self):
-    import reports.signals  # noqa
+    import report.signals  # noqa

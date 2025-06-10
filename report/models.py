@@ -1,4 +1,4 @@
-# reports/models.py
+# report/models.py
 from django.db import models
 from customers.models import Customer
 from django.conf import settings
