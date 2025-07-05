@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'report',
     'tasks',
     'message',
+    'bc',
 
 ]
 AUTH_USER_MODEL = 'accounts.User'

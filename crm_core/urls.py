@@ -14,5 +14,6 @@ urlpatterns = [
     path('activity/', include('activity.urls')),
     path('tasks/', include('tasks.urls')),
     path("message/", include("message.urls")),
+    path("bc/", include("bc.urls")),
 
 ]
