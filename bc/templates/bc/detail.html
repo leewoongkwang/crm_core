@@ -1,0 +1,22 @@
+<!-- bc/templates/bc/detail.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>{{ card.user.get_full_name|default:card.user.username }} 명함</title>
+</head>
+<body class="bg-gray-50 flex items-center justify-center h-screen">
+    <div class="bg-white shadow p-8 rounded text-center">
+        {% if card.profile_image %}
+            <img src="{{ card.profile_image.url }}" class="w-32 h-32 rounded-full mx-auto mb-4" alt="profile" />
+        {% else %}
+            <div class="w-32 h-32 rounded-full bg-gray-300 mx-auto mb-4"></div>
+        {% endif %}
+        <h1 class="text-xl font-bold mb-2">{{ card.user.get_full_name|default:card.user.username }}</h1>
+        <p class="mb-4">{{ card.bio }}</p>
+    </div>
+</body>
+</html>
+
